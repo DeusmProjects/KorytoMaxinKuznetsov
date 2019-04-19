@@ -48,11 +48,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Car.cs" />
+    <Compile Include="CarDetail.cs" />
     <Compile Include="Client.cs" />
+    <Compile Include="Detail.cs" />
+    <Compile Include="DetailRequest.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="OrderCar.cs" />
     <Compile Include="OrderStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Request.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
