@@ -11,6 +11,6 @@ namespace KorytoServiceDAL.ViewModel
         [DisplayName("Дата оформления")]
         public DateTime DateCreate { get; set; }
 
-        public virtual List<DetailRequestViewModel> DetailRequests { get; set; }
+        public List<DetailRequestViewModel> DetailRequests { get; set; }
     }
 }
