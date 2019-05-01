@@ -7,10 +7,10 @@ namespace KorytoServiceDAL.ViewModel
     {
         public int Id { get; set; }
 
-        public int CustomerId { get; set; }
+        public int ClientId { get; set; }
 
         [DisplayName("ФИО Клиента")]
-        public string CustomerFIO { get; set; }
+        public string ClientFIO { get; set; }
 
         public List<OrderCarViewModel> OrderCars { get; set; }
 
@@ -21,9 +21,9 @@ namespace KorytoServiceDAL.ViewModel
         public string StatusOrder { get; set; }
 
         [DisplayName("Дата создания заказа")]
-        public string DateCreateOrder { get; set; }
+        public string DateCreate { get; set; }
 
         [DisplayName("Дата завершения заказа")]
-        public string DateImplementOrder { get; set; }
+        public string DateImplement { get; set; }
     }
 }

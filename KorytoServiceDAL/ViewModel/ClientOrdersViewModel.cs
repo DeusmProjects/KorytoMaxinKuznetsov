@@ -12,6 +12,6 @@ namespace KorytoServiceDAL.ViewModel
 
         public decimal TotalSum { get; set; }
 
-        public string StatusBooking { get; set; }
+        public string StatusOrder { get; set; }
     }
 }
