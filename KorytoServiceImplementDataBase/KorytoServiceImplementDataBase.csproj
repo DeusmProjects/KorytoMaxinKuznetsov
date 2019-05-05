@@ -60,9 +60,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AbstractDbContext.cs" />
+    <Compile Include="Implementations\CarServiceDB.cs" />
     <Compile Include="Implementations\ClientServiceDB.cs" />
+    <Compile Include="Implementations\DetailServiceDB.cs" />
     <Compile Include="Implementations\MainServiceDB.cs" />
     <Compile Include="Implementations\ReportServiceDB.cs" />
+    <Compile Include="Implementations\RequestServiceDB.cs" />
     <Compile Include="Migrations\201904281933077_first.cs" />
     <Compile Include="Migrations\201904281933077_first.Designer.cs">
       <DependentUpon>201904281933077_first.cs</DependentUpon>
