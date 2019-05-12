@@ -26,9 +26,7 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public List<ClientOrdersViewModel> GetClientOrders(ReportBindingModel model)
         {
-            return context.Orders
-             .Include(rec => rec.Client)
-            .Include(rec => rec.OrderCars)
+            return context.Orders.Include(rec => rec.Client).Include(rec => rec.OrderCars)
             .Where(rec => rec.DateCreate >= model.DateFrom && rec.DateCreate <= model.DateTo)
              .Select(rec => new ClientOrdersViewModel
              {
@@ -37,8 +35,7 @@ namespace KorytoServiceImplementDataBase.Implementations
                     + " " +
                      SqlFunctions.DateName("mm", rec.DateCreate) +
                     " " +
-                     SqlFunctions.DateName("yyyy",
-                rec.DateCreate),
+                     SqlFunctions.DateName("yyyy", rec.DateCreate),
                  TotalSum = rec.TotalSum,
                  StatusOrder = rec.OrderStatus.ToString()
              })
@@ -93,8 +90,7 @@ namespace KorytoServiceImplementDataBase.Implementations
             table.SetTotalWidth(new float[] { 160, 140, 160, 100, 100, 140 });
             //вставляем шапку
             PdfPCell cell = new PdfPCell();
-            var fontForCellBold = new Font(baseFont, 10,
-           iTextSharp.text.Font.BOLD);
+            var fontForCellBold = new Font(baseFont, 10, Font.BOLD);
             table.AddCell(new PdfPCell(new Phrase("ФИО клиента", fontForCellBold))
             {
                 HorizontalAlignment = Element.ALIGN_CENTER
@@ -103,6 +99,7 @@ namespace KorytoServiceImplementDataBase.Implementations
             {
                 HorizontalAlignment = Element.ALIGN_CENTER
             });
+
             table.AddCell(new PdfPCell(new Phrase("Изделие", fontForCellBold))
             {
                 HorizontalAlignment = Element.ALIGN_CENTER
@@ -111,6 +108,7 @@ namespace KorytoServiceImplementDataBase.Implementations
             {
                 HorizontalAlignment = Element.ALIGN_CENTER
             });
+
             table.AddCell(new PdfPCell(new Phrase("Сумма", fontForCellBold))
             {
                 HorizontalAlignment = Element.ALIGN_CENTER
@@ -128,8 +126,11 @@ namespace KorytoServiceImplementDataBase.Implementations
                 table.AddCell(cell);
                 cell = new PdfPCell(new Phrase(list[i].DateCreateOrder, fontForCells));
                 table.AddCell(cell);
-                cell = new PdfPCell(new Phrase(list[i].OrderCars.ToString(), fontForCells));
-                table.AddCell(cell);
+                foreach(var car in list[i].OrderCars)
+                {
+                    cell = new PdfPCell(new Phrase(car.CarName.ToString(), fontForCells));
+                    table.AddCell(cell);
+                }
                 cell = new PdfPCell(new Phrase(list[i].OrderCars.Count.ToString(), fontForCells));
                 cell.HorizontalAlignment = Element.ALIGN_RIGHT;
                 table.AddCell(cell);
