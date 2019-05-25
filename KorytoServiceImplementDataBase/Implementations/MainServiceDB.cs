@@ -147,36 +147,28 @@ namespace KorytoServiceImplementDataBase.Implementations
                     {
                         throw new Exception("Заказ не в статусе \"Принят\"");
                     }
-                    var carDetails = context.CarDetails.Include(rec => rec.Detail).Where(rec => rec.CarId == element.);
-                    // списываем
-                    foreach (var productCondition in productConditions)
+
+                    var orderCars = context.OrderCars.Include(rec => rec.Car).Where(rec => rec.OrderId == element.Id);
+
+                    foreach (var orderCar in orderCars)
                     {
-                        int countOnCitys = productCondition.Amount * element.Amount;
-                        var stockConditions = context.CityConditions.Where(rec =>
-                        rec.ConditionId == productCondition.ConditionId);
-                        foreach (var stockCondition in stockConditions)
+                        var carDetails = context.CarDetails.Include(rec => rec.Detail).Where(rec => rec.CarId == orderCar.CarId);
+                        foreach (var carDetail in carDetails)
                         {
-                            // компонентов на одном слкаде может не хватать
-                            if (stockCondition.Amount >= countOnCitys)
+                            int countDetails = carDetail.Detail.TotalAmount;
+                            if(carDetail.Amount > countDetails)
                             {
-                                stockCondition.Amount -= countOnCitys;
-                                countOnCitys = 0;
-                                context.SaveChanges();
-                                break;
+                                throw new Exception("Недостаточно деталей");
                             }
                             else
                             {
-                                countOnCitys -= stockCondition.Amount;
-                                stockCondition.Amount = 0;
+                                carDetail.Detail.TotalAmount -= carDetail.Amount;
                                 context.SaveChanges();
+                                break;
                             }
                         }
-                        if (countOnCitys > 0)
-                        {
-                            throw new Exception("Не достаточно условий " +
-                           productCondition.Condition.ConditionName + " требуется " + productCondition.Amount + ", не хватает " + countOnCitys);
-                        }
                     }
+
                     element.DateImplement = DateTime.Now;
                     element.OrderStatus = OrderStatus.Выполняется;
                     context.SaveChanges();
