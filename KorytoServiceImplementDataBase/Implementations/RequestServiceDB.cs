@@ -5,6 +5,8 @@ using KorytoServiceDAL.ViewModel;
 using KorytoServiceImplementDataBase;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Data.Entity;
 
 namespace KorytoMaxinKuznetsovServiceDB.Implementations
 {
@@ -20,22 +22,78 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
 
         public void AddElement(RequestBindingModel model)
         {
-            throw new NotImplementedException();
+            context.Requests.Add(new Request
+            {
+                DateCreate = model.DateCreate
+            });
+
+            context.SaveChanges();
         }
 
         public void DeleteElement(int id)
         {
-            throw new NotImplementedException();
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    Request request = context.Requests.FirstOrDefault(record => record.Id == id);
+
+                    if (request != null)
+                    {
+                        context.DetailRequests.RemoveRange(context.DetailRequests.Where(rec => rec.RequestId == id));
+                        context.Requests.Remove(request);
+                        context.SaveChanges();
+                    }
+                    else
+                    {
+                        throw new Exception("Заявка не найдена");
+                    }
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
         }
 
         public RequestViewModel GetElement(int id)
         {
-            throw new NotImplementedException();
+            Request request = context.Requests.FirstOrDefault(
+                record => record.Id == id);
+
+            if (request != null)
+            {
+                return new RequestViewModel
+                {
+                    Id = request.Id,
+                    DateCreate = request.DateCreate,
+                    DetailRequests = context.DetailRequests
+                        .Where(record => record.RequestId == request.Id)
+                            .Select(recPC => new DetailRequestViewModel
+                            {
+                                Id = recPC.Id,
+                                DetailId = recPC.DetailId,
+                                RequestId = recPC.RequestId,
+                                Amount = recPC.Amount
+                            }).ToList()
+                };
+
+            }
+            throw new Exception("Заявка не найдена");
         }
 
         public List<RequestViewModel> GetList()
         {
-            throw new NotImplementedException();
+            List<RequestViewModel> result = context.Requests.Select(record => new RequestViewModel
+            {
+
+                Id = record.Id,
+                DateCreate = record.DateCreate
+
+            }).ToList();
+
+            return result;
         }
 
         public void UpdateElement(RequestBindingModel model)

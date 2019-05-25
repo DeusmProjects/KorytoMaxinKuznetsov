@@ -5,6 +5,9 @@ using KorytoServiceDAL.ViewModel;
 using KorytoServiceImplementDataBase;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Data.Entity;
+using System.Data.Entity.SqlServer;
 
 namespace KorytoMaxinKuznetsovServiceDB.Implementations
 {
@@ -20,7 +23,7 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
 
         public void AddElement(CarBindingModel model)
         {
-            using (var transaction = context.Cars.BeginTransaction())
+            using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
@@ -49,15 +52,15 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
                         .Select(record => new
                         {
                             detailId = record.Key,
-                            amount = rec.Sum(rec => rec.Amount)
+                            amount = record.Sum(rec => rec.Amount)
                         });
 
                     foreach (var duplicate in duplicates)
                     {
-                        ccontext.Cars.Add(new CarDetail
+                        context.CarDetails.Add(new CarDetail
                         {
                             CarId = car.Id,
-                            DetailId = duplicate.DetailId,
+                            DetailId = duplicate.detailId,
                             Amount = duplicate.amount
                         });
                         context.SaveChanges();
@@ -72,7 +75,7 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
 
         public void DeleteElement(int id)
         {
-            using (var transaction = context.Cars.BeginTransaction())
+            using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
@@ -85,7 +88,7 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
                             context.CarDetails.Where(
                                 record => record.CarId == id));
 
-                        context.CarDetails.Remove(car);
+                        context.Cars.Remove(car);
 
                         context.SaveChanges();
                     }
@@ -141,11 +144,10 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
                 CarName = record.CarName,
                 Price = record.Price,
 
-                DetailId = context.CarDetails.Where(recordCarDetails => recordCarDetails.CarId == record.Id)
-                .Select(recordCarDetails => new CarDetailViewModel
+                CarDetails = context.CarDetails.Where(recordCarDetails => recordCarDetails.CarId == record.Id).Select(recordCarDetails => new CarDetailViewModel
                 {
                     Id = recordCarDetails.Id,
-                    CarId = recordCarDetails.v,
+                    CarId = recordCarDetails.CarId,
                     DetailId = recordCarDetails.DetailId,
                     DetailName = recordCarDetails.Detail.DetailName,
                     Amount = recordCarDetails.Amount

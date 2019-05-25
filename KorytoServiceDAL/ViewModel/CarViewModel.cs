@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace KorytoServiceDAL.ViewModel
@@ -15,5 +16,7 @@ namespace KorytoServiceDAL.ViewModel
 
         [DisplayName("Год выпуска")]
         public int Year { get; set; }
+
+        public List<CarDetailViewModel> CarDetails { get; set; }
     }
 }
