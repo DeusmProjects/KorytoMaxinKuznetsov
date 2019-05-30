@@ -30,7 +30,8 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
 
             context.Details.Add(new Detail
             {
-                DetailName = model.DetailName
+                DetailName = model.DetailName,
+                TotalAmount = model.TotalAmount
             });
 
             context.SaveChanges();
@@ -62,8 +63,9 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
                 return new DetailViewModel
                 {
                     Id = detail.Id,
-                    DetailName = detail.DetailName
-                };
+                    DetailName = detail.DetailName,
+                    TotalAmount = detail.TotalAmount
+            };
 
             }
             throw new Exception("Деталь не найдена");
@@ -74,7 +76,8 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
             List<DetailViewModel> result = context.Details.Select(record => new DetailViewModel
             {
                 Id = record.Id,
-                DetailName = record.DetailName
+                DetailName = record.DetailName,
+                TotalAmount = record.TotalAmount
             }).ToList();
 
             return result;
@@ -99,6 +102,8 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
             }
 
             detail.DetailName = model.DetailName;
+            detail.TotalAmount = model.TotalAmount;
+
             context.SaveChanges();
         }
     }

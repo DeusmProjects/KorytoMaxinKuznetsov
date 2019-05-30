@@ -6,8 +6,6 @@ using KorytoServiceImplementDataBase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Data.Entity;
-using System.Data.Entity.SqlServer;
 
 namespace KorytoMaxinKuznetsovServiceDB.Implementations
 {
@@ -41,9 +39,10 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
                             CarName = model.CarName,
                             Price = model.Price,
                             Year = model.Year
+                            //CarDetails = model.CarDetails
                         };
                     }
-
+                   
                     context.Cars.Add(car);
                     context.SaveChanges();
 
@@ -121,6 +120,8 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
 
                     Price = car.Price,
 
+                    Year = car.Year,
+
                     CarDetails = context.CarDetails.Where(
                         recordCD => recordCD.CarId == car.Id)
                         .Select(recCD => new CarDetailViewModel
@@ -143,7 +144,7 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
                 Id = record.Id,
                 CarName = record.CarName,
                 Price = record.Price,
-
+                Year = record.Year,
                 CarDetails = context.CarDetails.Where(recordCarDetails => recordCarDetails.CarId == record.Id).Select(recordCarDetails => new CarDetailViewModel
                 {
                     Id = recordCarDetails.Id,
@@ -152,11 +153,13 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
                     DetailName = recordCarDetails.Detail.DetailName,
                     Amount = recordCarDetails.Amount
                 }).ToList()
-                
+
             }).ToList();
 
             return result;
         }
+
+       
 
         public void UpdateElement(CarBindingModel model)
         {
@@ -209,10 +212,10 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
                         record => record.Id == 0)
                         .GroupBy(record => record.DetailId)
                         .Select(record => new
-                           {
-                               detailId = record.Key,
-                               amount = record.Sum(r => r.Amount)
-                           });
+                        {
+                            detailId = record.Key,
+                            amount = record.Sum(r => r.Amount)
+                        });
 
                     foreach (var groupDetail in groupDetails)
                     {
@@ -229,7 +232,6 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
                             context.CarDetails.Add(new CarDetail
                             {
                                 CarId = model.Id,
-
                                 DetailId = groupDetail.detailId,
                                 Amount = groupDetail.amount
                             });
