@@ -137,6 +137,45 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
             throw new Exception("Автомобиль не найден");
         }
 
+        public List<CarViewModel> GetFilteredList()
+        {
+            var result = new List<CarViewModel>();
+
+            List<CarViewModel> cars = context.Cars.Select(rec => new CarViewModel
+            {
+                Id = rec.Id,
+                CarName = rec.CarName,
+                Year = rec.Year,
+                CarDetails = context.CarDetails
+                .Where(recCD => recCD.CarId == rec.Id)
+                .Select(recCD => new CarDetailViewModel
+                {
+                    Id = recCD.Id,
+                    CarId = recCD.CarId,
+                    DetailId = recCD.DetailId,
+                    DetailName = recCD.Detail.DetailName,
+                    Amount = recCD.Amount
+                }).ToList()
+            }).ToList();
+
+            foreach (var car in cars)
+            {
+                var carDetails = car.CarDetails.Select(rec => new DetailViewModel
+                {
+                    Id = rec.DetailId,
+                    DetailName = context.Details.FirstOrDefault(recD => recD.Id == rec.DetailId).DetailName,
+                    TotalAmount = context.Details.FirstOrDefault(recD => recD.Id == rec.DetailId).TotalAmount
+                }).ToList();
+
+                if (carDetails.All(rec => rec.TotalAmount > 0))
+                {
+                    result.Add(car);
+                }
+            }
+
+            return result;
+        }
+
         public List<CarViewModel> GetList()
         {
             List<CarViewModel> result = context.Cars.Select(record => new CarViewModel
@@ -157,9 +196,7 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
             }).ToList();
 
             return result;
-        }
-
-       
+        }    
 
         public void UpdateElement(CarBindingModel model)
         {

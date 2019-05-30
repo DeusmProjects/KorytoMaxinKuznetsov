@@ -8,6 +8,8 @@ namespace KorytoServiceDAL.Interfaces
     {
         List<CarViewModel> GetList();
 
+        List<CarViewModel> GetFilteredList();
+
         CarViewModel GetElement(int id);
 
         void AddElement(CarBindingModel model);
