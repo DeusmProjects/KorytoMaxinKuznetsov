@@ -39,7 +39,7 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
                             CarName = model.CarName,
                             Price = model.Price,
                             Year = model.Year
-                            //CarDetails = model.CarDetails
+                           
                         };
                     }
                    
@@ -64,10 +64,12 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
                         });
                         context.SaveChanges();
                     }
+                    transaction.Commit();
                 }
                 catch (Exception)
                 {
-                    transaction.Commit();
+                    transaction.Rollback();
+                    throw;
                 }
             }
         }
@@ -222,6 +224,7 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
 
                     car.CarName = model.CarName;
                     car.Price = model.Price;
+                    car.Year = model.Year;
                     context.SaveChanges();
 
                     var IDs = model.CarDetails.Select(

@@ -14,6 +14,5 @@ namespace KorytoServiceDAL.BindingModel
 
         public virtual List<CarDetailBindingModel> CarDetails { get; set; }
 
-        public virtual List<OrderCarBindingModel> OrderCars { get; set; }
     }
 }

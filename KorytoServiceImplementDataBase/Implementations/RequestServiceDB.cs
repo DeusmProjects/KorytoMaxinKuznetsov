@@ -86,6 +86,7 @@ namespace KorytoMaxinKuznetsovServiceDB.Implementations
                     {
                         throw new Exception("Заявка не найдена");
                     }
+                    transaction.Commit();
                 }
                 catch (Exception)
                 {

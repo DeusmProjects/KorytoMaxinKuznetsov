@@ -93,6 +93,9 @@ namespace KorytoServiceImplementDataBase.Implementations
                 throw new Exception("Элемент не найден");
             }
             element.ClientFIO = model.ClientFIO;
+            element.Mail = model.Mail;
+            element.Login = model.Login;
+            element.Password = model.Password;
             context.SaveChanges();
         }
     }
