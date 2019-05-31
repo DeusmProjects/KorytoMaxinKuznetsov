@@ -44,7 +44,7 @@ namespace KorytoView
                         details = requestView.DetailRequests;
                         LoadData();
                     }
-                   
+
                     LoadData();
                 }
                 catch (Exception ex)
@@ -169,25 +169,13 @@ namespace KorytoView
                         Amount = details[i].Amount,
                     });
                 }
-               
-                if (id.HasValue)
+
+                request.AddElement(new RequestBindingModel
                 {
-                    request.UpdateElement(new RequestBindingModel
-                    {
-                        Id = id.Value,
-                        DateCreate = DateTime.Now,
-                        DetailRequests = requestDetailsBinding
-                    });
-                }
-                else
-                {
-                    request.AddElement(new RequestBindingModel
-                    {
-                        DateCreate = DateTime.Now,
-                        DetailRequests = requestDetailsBinding
-                    });
-                }
-                
+                    DateCreate = DateTime.Now,
+                    DetailRequests = requestDetailsBinding
+                });
+
                 MessageBox.Show("Сохранение прошло успешно", "Сообщение",
                MessageBoxButtons.OK, MessageBoxIcon.Information);
                 DialogResult = DialogResult.OK;
@@ -206,6 +194,6 @@ namespace KorytoView
             Close();
         }
 
-       
+
     }
 }

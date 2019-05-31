@@ -11,9 +11,7 @@ namespace KorytoServiceDAL.Interfaces
         RequestViewModel GetElement(int id);
 
         void AddElement(RequestBindingModel model);
-
-        void UpdateElement(RequestBindingModel model);
-
+      
         void DeleteElement(int id);
     }
 }

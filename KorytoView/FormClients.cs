@@ -39,15 +39,7 @@ namespace KorytoView
             }
         }
 
-        private void buttonAddElement_Click(object sender, EventArgs e)
-        {
-            var form = Container.Resolve<FormClient>();
-            if (form.ShowDialog() == DialogResult.OK)
-            {
-                LoadData();
-            }
-        }
-
+        
         private void buttonDeleteElement_Click(object sender, EventArgs e)
         {
             if (dataGridView.SelectedRows.Count == 1)

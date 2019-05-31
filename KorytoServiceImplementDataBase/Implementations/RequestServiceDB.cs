@@ -43,13 +43,23 @@ namespace KorytoServiceImplementDataBase.Implementations
 
                     foreach (var gr in groupDetails)
                     {
-                        context.DetailRequests.Add(new DetailRequest
+                        DetailRequest detailRequest = new DetailRequest
                         {
-                            RequestId = gr.detailId,
+                            RequestId = request.Id,
                             DetailId = gr.detailId,
                             Amount = gr.amount
-                        });
+                        };
+
+                        context.DetailRequests.Add(detailRequest);
                         context.SaveChanges();
+
+                        Detail updateDetail = context.Details.FirstOrDefault(record => record.Id == detailRequest.DetailId);
+
+                        if (updateDetail != null)
+                        {
+                            updateDetail.TotalAmount += detailRequest.Amount;
+                            context.SaveChanges();
+                        }
                     }
 
                     transaction.Commit();
@@ -138,82 +148,6 @@ namespace KorytoServiceImplementDataBase.Implementations
             }).ToList();
 
             return result;
-        }
-
-        public void UpdateElement(RequestBindingModel model)
-        {
-            using (var transaction = context.Database.BeginTransaction())
-            {
-                try
-                {
-
-                    Request request = context.Requests.FirstOrDefault(
-                        rec => rec.Id != model.Id);
-                    
-                    if (request == null)
-                    {
-                        throw new Exception("Элемент не найден");
-                    }
-
-                    request.DateCreate = model.DateCreate;
-                   
-                    context.SaveChanges();
-
-
-
-                    var detailId = model.DetailRequests.Select(rec => rec.DetailId).Distinct();
-
-                    var updateDetails = context.DetailRequests.Where(rec => rec.RequestId == model.Id && detailId.Contains(rec.DetailId));
-
-                    foreach (var detail in updateDetails)
-                    {
-
-                        detail.Amount = model.DetailRequests.FirstOrDefault(rec => rec.Id == detail.Id).Amount;
-
-                    }
-
-                    context.SaveChanges();
-
-                    context.DetailRequests.RemoveRange(context.DetailRequests
-                        .Where(rec => rec.Id == model.Id && !detailId.Contains(rec.DetailId)));
-
-                    context.SaveChanges();
-
-                    var groupDetails = model.DetailRequests.Where(rec => rec.Id == 0).GroupBy(rec => rec.DetailId).Select(rec => new
-                    {
-                        detail_ID = rec.Key,
-                        amount = rec.Sum(r => r.Amount)
-                    });
-
-                    foreach (var groupDetail in groupDetails)
-                    {
-                        DetailRequest detail = context.DetailRequests.FirstOrDefault(rec => rec.RequestId == model.Id && rec.DetailId == groupDetail.detail_ID);
-
-                        if (detail != null)
-                        {
-                            detail.Amount += groupDetail.amount;
-                            context.SaveChanges();
-                        }
-                        else
-                        {
-                            context.DetailRequests.Add(new DetailRequest
-                            {
-                                RequestId = model.Id,
-                                DetailId = groupDetail.detail_ID,
-                                Amount = groupDetail.amount
-                            });
-                            context.SaveChanges();
-                        }
-                    }
-
-                    transaction.Commit();
-                }
-                catch (Exception)
-                {
-                    transaction.Rollback();
-                    throw;
-                }
-            }
-        }
+        }      
     }
 }

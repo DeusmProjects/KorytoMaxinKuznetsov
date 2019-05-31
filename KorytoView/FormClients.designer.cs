@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.dataGridView = new System.Windows.Forms.DataGridView();
-            this.buttonAddElement = new System.Windows.Forms.Button();
             this.buttonDeleteElement = new System.Windows.Forms.Button();
             this.buttonChangeElement = new System.Windows.Forms.Button();
             this.buttonUpdate = new System.Windows.Forms.Button();
@@ -45,19 +44,9 @@
             this.dataGridView.Size = new System.Drawing.Size(550, 426);
             this.dataGridView.TabIndex = 0;
             // 
-            // buttonAddElement
-            // 
-            this.buttonAddElement.Location = new System.Drawing.Point(584, 12);
-            this.buttonAddElement.Name = "buttonAddElement";
-            this.buttonAddElement.Size = new System.Drawing.Size(191, 45);
-            this.buttonAddElement.TabIndex = 1;
-            this.buttonAddElement.Text = "Добавить";
-            this.buttonAddElement.UseVisualStyleBackColor = true;
-            this.buttonAddElement.Click += new System.EventHandler(this.buttonAddElement_Click);
-            // 
             // buttonDeleteElement
             // 
-            this.buttonDeleteElement.Location = new System.Drawing.Point(584, 63);
+            this.buttonDeleteElement.Location = new System.Drawing.Point(588, 13);
             this.buttonDeleteElement.Name = "buttonDeleteElement";
             this.buttonDeleteElement.Size = new System.Drawing.Size(191, 45);
             this.buttonDeleteElement.TabIndex = 2;
@@ -67,7 +56,7 @@
             // 
             // buttonChangeElement
             // 
-            this.buttonChangeElement.Location = new System.Drawing.Point(584, 114);
+            this.buttonChangeElement.Location = new System.Drawing.Point(588, 64);
             this.buttonChangeElement.Name = "buttonChangeElement";
             this.buttonChangeElement.Size = new System.Drawing.Size(191, 45);
             this.buttonChangeElement.TabIndex = 3;
@@ -77,7 +66,7 @@
             // 
             // buttonUpdate
             // 
-            this.buttonUpdate.Location = new System.Drawing.Point(584, 165);
+            this.buttonUpdate.Location = new System.Drawing.Point(588, 115);
             this.buttonUpdate.Name = "buttonUpdate";
             this.buttonUpdate.Size = new System.Drawing.Size(191, 44);
             this.buttonUpdate.TabIndex = 23;
@@ -93,7 +82,6 @@
             this.Controls.Add(this.buttonUpdate);
             this.Controls.Add(this.buttonChangeElement);
             this.Controls.Add(this.buttonDeleteElement);
-            this.Controls.Add(this.buttonAddElement);
             this.Controls.Add(this.dataGridView);
             this.Name = "FormClients";
             this.Text = "Клиенты";
@@ -106,7 +94,6 @@
         #endregion
 
         private System.Windows.Forms.DataGridView dataGridView;
-        private System.Windows.Forms.Button buttonAddElement;
         private System.Windows.Forms.Button buttonDeleteElement;
         private System.Windows.Forms.Button buttonChangeElement;
         private System.Windows.Forms.Button buttonUpdate;
