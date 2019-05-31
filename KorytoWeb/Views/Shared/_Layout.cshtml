@@ -20,9 +20,16 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Заказы", "Index", "Orders")</li>
-                    <li>@Html.ActionLink("Машины", "Index", "Cars")</li>
-                    <li>@Html.ActionLink("Клиенты", "Index", "Clients")</li>
+                    @if (Globals.AuthClient != null)
+                    {
+                        <li>@Html.ActionLink("Заказы", "Index", "Orders")</li>
+                        <li>@Html.ActionLink("Машины", "Index", "Cars")</li>
+                        <li>@Html.ActionLink("Выйти", "Exit", "Clients")</li>
+                    }
+                    else
+                    {
+                        <li>@Html.ActionLink("Авторизация", "Auth", "Clients")</li>
+                    }
                 </ul>
             </div>
         </div>
