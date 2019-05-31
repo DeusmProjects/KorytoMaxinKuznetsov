@@ -8,6 +8,8 @@ namespace KorytoServiceDAL.Interfaces
     {
         List<OrderViewModel> GetList();
 
+        List<OrderViewModel> GetClientOrders(int clientId);
+
         void CreateOrder(OrderBindingModel model);
 
         void TakeOrderInWork(OrderBindingModel model);

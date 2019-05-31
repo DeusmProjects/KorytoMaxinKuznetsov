@@ -1,4 +1,4 @@
-﻿@model IEnumerable<KorytoModel.Order>
+﻿@model IEnumerable<KorytoServiceDAL.ViewModel.OrderViewModel>
 
 @{
     ViewBag.Title = "Заказы";
@@ -7,13 +7,10 @@
 <h2>Список заказов</h2>
 
 <p>
-    @Html.ActionLink("Создать заказ", "Create")
+    @Html.ActionLink("Создать заказ", "Index", "Order")
 </p>
 <table class="table">
     <tr>
-        <th>
-            <label>ФИО клиента</label>
-        </th>
         <th>
             <label>Сумма заказа</label>
         </th>
@@ -32,13 +29,10 @@
     @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Client.ClientFIO)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.TotalSum)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.OrderStatus)
+                @Html.DisplayFor(modelItem => item.StatusOrder)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DateCreate)

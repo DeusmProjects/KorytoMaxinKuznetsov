@@ -2,7 +2,6 @@
 using KorytoServiceDAL.BindingModel;
 using KorytoServiceDAL.Interfaces;
 using System.Linq;
-using System.Net;
 using System.Web.Mvc;
 
 namespace KorytoWeb.Controllers
@@ -28,7 +27,9 @@ namespace KorytoWeb.Controllers
         {
             if (service.GetList().Any(rec => rec.Login == client.Login && rec.Password == client.Password))
             {
-                RedirectToAction("Index", "Orders");
+                var authClient = service.GetList().FirstOrDefault(cl => cl.Login == client.Login);
+                Globals.AuthClient = authClient;
+                return RedirectToAction("Index", "Orders");
             }
 
             return View(client);
@@ -77,6 +78,12 @@ namespace KorytoWeb.Controllers
             }
 
             return View(client);
+        }
+
+        public ActionResult Exit()
+        {
+            Globals.AuthClient = null;
+            return RedirectToAction("Auth");
         }
     }
 }

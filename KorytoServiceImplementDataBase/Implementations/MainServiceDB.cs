@@ -78,6 +78,15 @@ namespace KorytoServiceImplementDataBase.Implementations
             context.SaveChanges();
         }
 
+        public List<OrderViewModel> GetClientOrders(int clientId)
+        {
+            var orders = GetList();
+
+            var result = orders.Where(rec => rec.ClientId == clientId).Select(rec => rec).ToList();
+
+            return result;
+        }
+
         public List<OrderViewModel> GetList()
         {
             List<OrderViewModel> result = context.Orders.Select(rec => new OrderViewModel

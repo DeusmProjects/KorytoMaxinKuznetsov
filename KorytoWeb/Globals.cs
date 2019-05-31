@@ -1,4 +1,5 @@
 ﻿using KorytoServiceDAL.Interfaces;
+using KorytoServiceDAL.ViewModel;
 using KorytoServiceImplementDataBase;
 using KorytoServiceImplementDataBase.Implementations;
 
@@ -12,5 +13,7 @@ namespace KorytoWeb
         public static IDetailService DetailService { get; } = new DetailServiceDB(DbContext);
         public static IMainService MainService { get; } = new MainServiceDB(DbContext);
         public static IRequestService RequestService { get; } = new RequestServiceDB(DbContext);
+
+        public static ClientViewModel AuthClient { get; set; } = null;
     }
 }
