@@ -12,9 +12,9 @@ namespace KorytoServiceImplementDataBase.Implementations
 {
     public class MainServiceDB : IMainService
     {
-        private AbstractDbContext context;
+        private KorytoDbContext context;
 
-        public MainServiceDB(AbstractDbContext context)
+        public MainServiceDB(KorytoDbContext context)
         {
             this.context = context;
         }

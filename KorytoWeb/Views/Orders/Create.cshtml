@@ -1,0 +1,51 @@
+﻿@*@model KorytoModel.Order*@
+@model IEnumerable<KorytoModel.Order>
+
+@{
+    ViewBag.Title = "Создание заказа";
+}
+
+<h2>Создать</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Заказ</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+      
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Автомобиль</th>
+                    <th scope="col">Количество</th>
+                </tr>
+            </thead>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderCars.Select(car => car.Car.CarName).Where())
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Amount)
+                    </td>
+    
+                </tr>
+            }
+        </table>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Создать заказ" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Список заказов", "Index")
+</div>

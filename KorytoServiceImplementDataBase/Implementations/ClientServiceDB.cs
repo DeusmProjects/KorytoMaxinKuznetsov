@@ -12,9 +12,9 @@ namespace KorytoServiceImplementDataBase.Implementations
 {
     public class ClientServiceDB : IClientService
     {
-        private AbstractDbContext context;
+        private KorytoDbContext context;
 
-        public ClientServiceDB(AbstractDbContext context)
+        public ClientServiceDB(KorytoDbContext context)
         {
             this.context = context;
         }

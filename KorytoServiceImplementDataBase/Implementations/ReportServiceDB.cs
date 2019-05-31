@@ -17,9 +17,9 @@ namespace KorytoServiceImplementDataBase.Implementations
 {
     public class ReportServiceDB : IReportService
     {
-        private AbstractDbContext context;
+        private KorytoDbContext context;
 
-        public ReportServiceDB(AbstractDbContext context)
+        public ReportServiceDB(KorytoDbContext context)
         {
             this.context = context;
         }

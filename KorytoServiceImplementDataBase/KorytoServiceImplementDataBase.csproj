@@ -61,16 +61,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractDbContext.cs" />
+    <Compile Include="KorytoDbContext.cs" />
     <Compile Include="Implementations\CarServiceDB.cs" />
     <Compile Include="Implementations\ClientServiceDB.cs" />
     <Compile Include="Implementations\DetailServiceDB.cs" />
     <Compile Include="Implementations\MainServiceDB.cs" />
     <Compile Include="Implementations\ReportServiceDB.cs" />
     <Compile Include="Implementations\RequestServiceDB.cs" />
-    <Compile Include="Migrations\201904281933077_first.cs" />
-    <Compile Include="Migrations\201904281933077_first.Designer.cs">
-      <DependentUpon>201904281933077_first.cs</DependentUpon>
+    <Compile Include="Migrations\201905310537333_init.cs" />
+    <Compile Include="Migrations\201905310537333_init.Designer.cs">
+      <DependentUpon>201905310537333_init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -91,14 +91,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Resources\TIMCYR.TTF" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201904281933077_first.resx">
-      <DependentUpon>201904281933077_first.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201905310537333_init.resx">
+      <DependentUpon>201905310537333_init.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
