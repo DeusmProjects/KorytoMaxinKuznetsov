@@ -41,6 +41,7 @@
             this.buttonTakeOrder = new System.Windows.Forms.Button();
             this.buttonFinish = new System.Windows.Forms.Button();
             this.buttonUpdate = new System.Windows.Forms.Button();
+            this.buttonOrderView = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -157,11 +158,21 @@
             this.buttonUpdate.UseVisualStyleBackColor = true;
             this.buttonUpdate.Click += new System.EventHandler(this.buttonUpdate_Click);
             // 
+            // buttonOrderView
+            // 
+            this.buttonOrderView.Location = new System.Drawing.Point(826, 512);
+            this.buttonOrderView.Name = "buttonOrderView";
+            this.buttonOrderView.Size = new System.Drawing.Size(163, 35);
+            this.buttonOrderView.TabIndex = 5;
+            this.buttonOrderView.Text = "Просмотреть заказ";
+            this.buttonOrderView.UseVisualStyleBackColor = true;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1048, 559);
+            this.Controls.Add(this.buttonOrderView);
             this.Controls.Add(this.buttonUpdate);
             this.Controls.Add(this.buttonFinish);
             this.Controls.Add(this.buttonTakeOrder);
@@ -193,5 +204,6 @@
         private System.Windows.Forms.ToolStripMenuItem заявкиToolStripMenuItem1;
         private System.Windows.Forms.Button buttonFinish;
         private System.Windows.Forms.Button buttonUpdate;
+        private System.Windows.Forms.Button buttonOrderView;
     }
 }
