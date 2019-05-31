@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.buttonUpdate = new System.Windows.Forms.Button();
-            this.buttonChangeElement = new System.Windows.Forms.Button();
             this.buttonDeleteElement = new System.Windows.Forms.Button();
             this.buttonAddElement = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -39,6 +38,7 @@
             this.textBoxDate = new System.Windows.Forms.TextBox();
             this.label_CNAME = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.buttonChangeElement = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -51,16 +51,6 @@
             this.buttonUpdate.Text = "Обновить";
             this.buttonUpdate.UseVisualStyleBackColor = true;
             this.buttonUpdate.Click += new System.EventHandler(this.buttonUpdate_Click);
-            // 
-            // buttonChangeElement
-            // 
-            this.buttonChangeElement.Location = new System.Drawing.Point(500, 240);
-            this.buttonChangeElement.Name = "buttonChangeElement";
-            this.buttonChangeElement.Size = new System.Drawing.Size(184, 41);
-            this.buttonChangeElement.TabIndex = 28;
-            this.buttonChangeElement.Text = "Изменить";
-            this.buttonChangeElement.UseVisualStyleBackColor = true;
-            this.buttonChangeElement.Click += new System.EventHandler(this.buttonChangeElement_Click);
             // 
             // buttonDeleteElement
             // 
@@ -147,6 +137,16 @@
             this.label2.TabIndex = 32;
             this.label2.Text = "дд/мм/гг";
             // 
+            // buttonChangeElement
+            // 
+            this.buttonChangeElement.Location = new System.Drawing.Point(500, 240);
+            this.buttonChangeElement.Name = "buttonChangeElement";
+            this.buttonChangeElement.Size = new System.Drawing.Size(184, 41);
+            this.buttonChangeElement.TabIndex = 28;
+            this.buttonChangeElement.Text = "Изменить";
+            this.buttonChangeElement.UseVisualStyleBackColor = true;
+            this.buttonChangeElement.Click += new System.EventHandler(this.buttonChangeElement_Click);
+            // 
             // FormRequest
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -175,7 +175,6 @@
         #endregion
 
         private System.Windows.Forms.Button buttonUpdate;
-        private System.Windows.Forms.Button buttonChangeElement;
         private System.Windows.Forms.Button buttonDeleteElement;
         private System.Windows.Forms.Button buttonAddElement;
         private System.Windows.Forms.Label label1;
@@ -185,5 +184,6 @@
         private System.Windows.Forms.TextBox textBoxDate;
         private System.Windows.Forms.Label label_CNAME;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button buttonChangeElement;
     }
 }

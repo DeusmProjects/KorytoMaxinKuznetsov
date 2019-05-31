@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.buttonUpdate = new System.Windows.Forms.Button();
-            this.buttonChangeElement = new System.Windows.Forms.Button();
             this.buttonDeleteElement = new System.Windows.Forms.Button();
             this.buttonAddElement = new System.Windows.Forms.Button();
             this.dataGridView = new System.Windows.Forms.DataGridView();
@@ -38,23 +37,13 @@
             // 
             // buttonUpdate
             // 
-            this.buttonUpdate.Location = new System.Drawing.Point(593, 168);
+            this.buttonUpdate.Location = new System.Drawing.Point(593, 117);
             this.buttonUpdate.Name = "buttonUpdate";
             this.buttonUpdate.Size = new System.Drawing.Size(191, 44);
             this.buttonUpdate.TabIndex = 29;
             this.buttonUpdate.Text = "Обновить";
             this.buttonUpdate.UseVisualStyleBackColor = true;
             this.buttonUpdate.Click += new System.EventHandler(this.buttonUpdate_Click);
-            // 
-            // buttonChangeElement
-            // 
-            this.buttonChangeElement.Location = new System.Drawing.Point(593, 117);
-            this.buttonChangeElement.Name = "buttonChangeElement";
-            this.buttonChangeElement.Size = new System.Drawing.Size(191, 45);
-            this.buttonChangeElement.TabIndex = 28;
-            this.buttonChangeElement.Text = "Изменить";
-            this.buttonChangeElement.UseVisualStyleBackColor = true;
-            this.buttonChangeElement.Click += new System.EventHandler(this.buttonChangeElement_Click);
             // 
             // buttonDeleteElement
             // 
@@ -92,7 +81,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.buttonUpdate);
-            this.Controls.Add(this.buttonChangeElement);
             this.Controls.Add(this.buttonDeleteElement);
             this.Controls.Add(this.buttonAddElement);
             this.Controls.Add(this.dataGridView);
@@ -107,7 +95,6 @@
         #endregion
 
         private System.Windows.Forms.Button buttonUpdate;
-        private System.Windows.Forms.Button buttonChangeElement;
         private System.Windows.Forms.Button buttonDeleteElement;
         private System.Windows.Forms.Button buttonAddElement;
         private System.Windows.Forms.DataGridView dataGridView;
