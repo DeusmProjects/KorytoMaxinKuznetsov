@@ -78,59 +78,5 @@ namespace KorytoWeb.Controllers
 
             return View(client);
         }
-
-        // GET: Clients/Edit/5
-        public ActionResult Edit(int id)
-        {
-            var client = service.GetElement(id);
-            if (client == null)
-            {
-                return HttpNotFound();
-            }
-            return View(client);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,ClientFIO,Login,Password,Mail")] Client client)
-        {
-            if (ModelState.IsValid)
-            {
-                service.UpdateElement(new ClientBindingModel
-                {
-                    Id = client.Id,
-                    ClientFIO = client.ClientFIO,
-                    Login = client.Login,
-                    Password = client.Password,
-                    Mail = client.Mail
-                });
-                return RedirectToAction("Index");
-            }
-            return View(client);
-        }
-
-        // GET: Clients/Delete/5
-        public ActionResult Delete(int id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            var client = service.GetElement(id);
-            if (client == null)
-            {
-                return HttpNotFound();
-            }
-            return View(client);
-        }
-
-        // POST: Clients/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            service.DeleteElement(id);
-            return RedirectToAction("Index");
-        }
     }
 }

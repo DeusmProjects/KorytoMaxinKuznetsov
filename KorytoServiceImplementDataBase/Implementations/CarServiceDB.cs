@@ -147,6 +147,7 @@ namespace KorytoServiceImplementDataBase.Implementations
                 Id = rec.Id,
                 CarName = rec.CarName,
                 Year = rec.Year,
+                Price = rec.Price,
                 CarDetails = context.CarDetails
                 .Where(recCD => recCD.CarId == rec.Id)
                 .Select(recCD => new CarDetailViewModel
@@ -161,14 +162,13 @@ namespace KorytoServiceImplementDataBase.Implementations
 
             foreach (var car in cars)
             {
-                var carDetails = car.CarDetails.Select(rec => new DetailViewModel
+                var details = car.CarDetails.Select(rec => new DetailViewModel
                 {
                     Id = rec.DetailId,
-                    DetailName = context.Details.FirstOrDefault(recD => recD.Id == rec.DetailId).DetailName,
                     TotalAmount = context.Details.FirstOrDefault(recD => recD.Id == rec.DetailId).TotalAmount
                 }).ToList();
 
-                if (carDetails.All(rec => rec.TotalAmount > 0))
+                if (details.All(rec => rec.TotalAmount >= car.CarDetails.FirstOrDefault(recCD => recCD.DetailId == rec.Id).Amount))
                 {
                     result.Add(car);
                 }
