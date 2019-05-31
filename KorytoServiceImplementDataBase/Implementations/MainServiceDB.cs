@@ -121,6 +121,20 @@ namespace KorytoServiceImplementDataBase.Implementations
             return result;
         }
 
+        public Order GetElement(int id)
+        {
+            Order order = context.Orders.FirstOrDefault(
+                record => record.Id == id);
+
+            if (order != null)
+            {
+
+                return order;
+
+            }
+            throw new Exception("Автомобиль не найден");
+        }
+
         public void PayOrder(OrderBindingModel model)
         {
             Order element = context.Orders.FirstOrDefault(rec => rec.Id == model.Id);

@@ -1,4 +1,5 @@
-﻿using KorytoServiceDAL.BindingModel;
+﻿using KorytoModel;
+using KorytoServiceDAL.BindingModel;
 using KorytoServiceDAL.ViewModel;
 using System.Collections.Generic;
 
@@ -9,6 +10,8 @@ namespace KorytoServiceDAL.Interfaces
         List<OrderViewModel> GetList();
 
         List<OrderViewModel> GetClientOrders(int clientId);
+
+        Order GetElement(int id);
 
         void CreateOrder(OrderBindingModel model);
 
