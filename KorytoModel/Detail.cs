@@ -14,6 +14,9 @@ namespace KorytoModel
         [Required]
         public int TotalAmount { get; set; }
 
+        [Required]
+        public int TotalReserve { get; set; }
+
         [ForeignKey("DetailId")]
         public virtual List<CarDetail> CarDetails { get; set; }
 

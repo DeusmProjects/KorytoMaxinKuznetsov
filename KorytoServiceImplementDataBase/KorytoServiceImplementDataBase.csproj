@@ -80,6 +80,10 @@
     <Compile Include="Migrations\201905311015364_delete-tables.Designer.cs">
       <DependentUpon>201905311015364_delete-tables.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201905312013412_reserve-order.cs" />
+    <Compile Include="Migrations\201905312013412_reserve-order.Designer.cs">
+      <DependentUpon>201905312013412_reserve-order.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -115,6 +119,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201905311015364_delete-tables.resx">
       <DependentUpon>201905311015364_delete-tables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905312013412_reserve-order.resx">
+      <DependentUpon>201905312013412_reserve-order.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -31,6 +31,11 @@ namespace KorytoWeb.Controllers
             return View((OrderViewModel)Session["Order"]);
         }
 
+        public ActionResult Reserve()
+        {
+            return View();
+        }
+
         public ActionResult AddCar()
         {
             var cars = new SelectList(carService.GetList(), "Id", "CarName");
@@ -70,6 +75,32 @@ namespace KorytoWeb.Controllers
             }
 
             service.CreateOrder(new OrderBindingModel
+            {
+                ClientId = Globals.AuthClient.Id,
+                TotalSum = orderCars.Sum(rec => rec.Amount * carService.GetElement(rec.CarId).Price),
+                OrderCars = orderCars
+            });
+            Session.Remove("Order");
+            return RedirectToAction("Index", "Orders");
+        }
+
+        [HttpPost]
+        public ActionResult ReservePost()
+        {
+            var order = (OrderViewModel)Session["Order"];
+            var orderCars = new List<OrderCarBindingModel>();
+            for (int i = 0; i < order.OrderCars.Count; ++i)
+            {
+                orderCars.Add(new OrderCarBindingModel
+                {
+                    Id = order.OrderCars[i].Id,
+                    OrderId = order.OrderCars[i].OrderId,
+                    CarId = order.OrderCars[i].CarId,
+                    Amount = order.OrderCars[i].Amount
+                });
+            }
+
+            service.ReserveOrder(new OrderBindingModel
             {
                 ClientId = Globals.AuthClient.Id,
                 TotalSum = orderCars.Sum(rec => rec.Amount * carService.GetElement(rec.CarId).Price),

@@ -138,7 +138,72 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public void ReserveOrder(OrderBindingModel model)
         {
-            throw new NotImplementedException();
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    Order element = new Order
+                    {
+                        ClientId = model.ClientId,
+                        DateCreate = DateTime.Now,
+                        TotalSum = model.TotalSum,
+                        OrderStatus = OrderStatus.Зарезервирован
+                    };
+
+                    context.Orders.Add(element);
+                    context.SaveChanges();
+
+                    var groupCars = model.OrderCars.GroupBy(rec => rec.CarId)
+                        .Select(rec => new
+                        {
+                            CarId = rec.Key,
+                            Amount = rec.Sum(r => r.Amount)
+                        });
+
+
+                    foreach (var groupCar in groupCars)
+                    {
+                        OrderCar orderCar = new OrderCar
+                        {
+                            OrderId = element.Id,
+                            CarId = groupCar.CarId,
+                            Amount = groupCar.Amount
+                        };
+
+                        CarDetail carDetail = context.CarDetails.FirstOrDefault(rec => rec.CarId == orderCar.CarId);
+
+                        Detail detail = context.Details.FirstOrDefault(rec => rec.Id == carDetail.DetailId);
+
+                        int reserveDetails = carDetail.Amount;
+
+                        int check = detail.TotalAmount - reserveDetails;
+
+                        if (check >= 0)
+                        {
+
+                            detail.TotalReserve += reserveDetails;
+
+                        }
+                        else
+                        {
+
+                            throw new Exception("Недостаточно деталей для резервации");
+
+                        }
+
+                        context.SaveChanges();
+                    }
+
+
+                    transaction.Commit();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+
         }
 
         public void TakeOrderInWork(OrderBindingModel model)
@@ -152,28 +217,52 @@ namespace KorytoServiceImplementDataBase.Implementations
                     {
                         throw new Exception("Элемент не найден");
                     }
-                    if (element.OrderStatus != OrderStatus.Принят)
+
+                    if (element.OrderStatus != OrderStatus.Принят || element.OrderStatus != OrderStatus.Зарезервирован)
                     {
-                        throw new Exception("Заказ не в статусе \"Принят\"");
+                        throw new Exception("Заказ не в статусе \"Принят\" или \"Зарезервирован\"");
                     }
 
-                    var orderCars = context.OrderCars.Include(rec => rec.Car).Where(rec => rec.OrderId == element.Id);
+                    var orderCars = context.OrderCars.Where(rec => rec.OrderId == element.Id).Select(car => car);
 
                     foreach (var orderCar in orderCars)
                     {
-                        var carDetails = context.CarDetails.Include(rec => rec.Detail).Where(rec => rec.CarId == orderCar.CarId);
+                        var carDetails = context.CarDetails.Where(rec => rec.CarId == orderCar.CarId).Select(det => det);
                         foreach (var carDetail in carDetails)
                         {
-                            int countDetails = carDetail.Detail.TotalAmount;
-                            if(carDetail.Amount > countDetails)
+                            if (element.OrderStatus == OrderStatus.Принят)
                             {
-                                throw new Exception("Недостаточно деталей");
+
+                                int countDetails = carDetail.Detail.TotalAmount;
+
+                                if (carDetail.Amount > countDetails)
+                                {
+                                    throw new Exception("Недостаточно деталей");
+                                }
+                                else
+                                {
+                                    carDetail.Detail.TotalAmount -= carDetail.Amount;
+                                    context.SaveChanges();
+                                    break;
+                                }
+
                             }
-                            else
+
+                            if (element.OrderStatus == OrderStatus.Зарезервирован)
                             {
-                                carDetail.Detail.TotalAmount -= carDetail.Amount;
-                                context.SaveChanges();
-                                break;
+
+                                int countDetails = carDetail.Detail.TotalReserve;
+
+                                if (carDetail.Amount > countDetails)
+                                {
+                                    throw new Exception("Недостаточно деталей");
+                                }
+                                else
+                                {
+                                    carDetail.Detail.TotalReserve -= carDetail.Amount;
+                                    context.SaveChanges();
+                                    break;
+                                }
                             }
                         }
                     }
