@@ -109,7 +109,9 @@
     <None Include="packages.config" />
     <None Include="Resources\TIMCYR.TTF" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Statistic\" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201905310537333_init.resx">
       <DependentUpon>201905310537333_init.cs</DependentUpon>
