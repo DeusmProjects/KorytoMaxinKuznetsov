@@ -3,13 +3,13 @@ using System.Data.Entity;
 
 namespace KorytoServiceImplementDataBase
 {
-    public class AbstractDbContext : DbContext
+    public class KorytoDbContext : DbContext
     {
-        public AbstractDbContext() : base("AbstractDatabase")
+        public KorytoDbContext()
         {
-            Configuration.ProxyCreationEnabled = false;
-            Configuration.LazyLoadingEnabled = false;
-            var ensureDLLIsCopied = System.Data.Entity.SqlServer.SqlProviderServices.Instance;
+            //Configuration.ProxyCreationEnabled = false;
+            //Configuration.LazyLoadingEnabled = false;
+            //var ensureDLLIsCopied = System.Data.Entity.SqlServer.SqlProviderServices.Instance;
         }
 
         public virtual DbSet<Client> Clients { get; set; }

@@ -2,19 +2,18 @@
 using KorytoServiceDAL.BindingModel;
 using KorytoServiceDAL.Interfaces;
 using KorytoServiceDAL.ViewModel;
-using KorytoServiceImplementDataBase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace KorytoMaxinKuznetsovServiceDB.Implementations
+namespace KorytoServiceImplementDataBase.Implementations
 {
     public class CarServiceDB : ICarService
     {
 
-        AbstractDbContext context;
+        KorytoDbContext context;
 
-        public CarServiceDB(AbstractDbContext context)
+        public CarServiceDB(KorytoDbContext context)
         {
             this.context = context;
         }

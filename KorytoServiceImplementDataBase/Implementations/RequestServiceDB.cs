@@ -2,20 +2,18 @@
 using KorytoServiceDAL.BindingModel;
 using KorytoServiceDAL.Interfaces;
 using KorytoServiceDAL.ViewModel;
-using KorytoServiceImplementDataBase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Data.Entity;
 
-namespace KorytoMaxinKuznetsovServiceDB.Implementations
+namespace KorytoServiceImplementDataBase.Implementations
 {
     public class RequestServiceDB : IRequestService
     {
 
-        AbstractDbContext context;
+        KorytoDbContext context;
 
-        public RequestServiceDB(AbstractDbContext context)
+        public RequestServiceDB(KorytoDbContext context)
         {
             this.context = context;
         }
