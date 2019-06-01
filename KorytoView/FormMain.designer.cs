@@ -166,6 +166,7 @@
             this.buttonOrderView.TabIndex = 5;
             this.buttonOrderView.Text = "Просмотреть заказ";
             this.buttonOrderView.UseVisualStyleBackColor = true;
+            this.buttonOrderView.Click += new System.EventHandler(this.buttonOrderView_Click);
             // 
             // FormMain
             // 

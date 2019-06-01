@@ -114,8 +114,8 @@ namespace KorytoView
                     dataGridView.DataSource = list;
                     dataGridView.Columns[0].Visible = false;
                     dataGridView.Columns[1].Visible = false;
-                    dataGridView.Columns[2].Visible = false;
-                    dataGridView.Columns[3].Visible = false;
+                    dataGridView.Columns[2].Visible = true;
+                    dataGridView.Columns[3].Visible = true;
                     dataGridView.Columns[4].AutoSizeMode =
                     DataGridViewAutoSizeColumnMode.Fill;
                 }
@@ -124,6 +124,19 @@ namespace KorytoView
             {
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
                MessageBoxIcon.Error);
+            }
+        }
+
+        private void buttonOrderView_Click(object sender, EventArgs e)
+        {
+            if (dataGridView.SelectedRows.Count == 1)
+            {
+                var form = Container.Resolve<FormOrderView>();
+                form.Id = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    LoadData();
+                }
             }
         }
     }
