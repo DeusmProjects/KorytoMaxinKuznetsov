@@ -32,5 +32,18 @@ namespace KorytoServiceImplementDataBase.Implementations
 
             return name + " в количестве " + count + " машин";
         }
+
+        private string GetCars(int clientId)
+        {
+            var clientCars = context.OrderCars.Where(rec => rec.Order.ClientId == clientId).Select(rec => rec);
+
+            var most = clientCars
+                .GroupBy(rec => rec.CarId)
+                .Select(rec => new { Id = rec.Key, Total = rec.Sum(x => x.Amount)})
+                .OrderByDescending(rec => rec.Total)
+                .First();
+
+            return "";
+        }
     }
 }
