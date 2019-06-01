@@ -32,6 +32,7 @@
             this.buttonDeleteElement = new System.Windows.Forms.Button();
             this.buttonChangeElement = new System.Windows.Forms.Button();
             this.buttonUpdate = new System.Windows.Forms.Button();
+            this.buttonStat = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -74,11 +75,22 @@
             this.buttonUpdate.UseVisualStyleBackColor = true;
             this.buttonUpdate.Click += new System.EventHandler(this.buttonUpdate_Click);
             // 
+            // buttonStat
+            // 
+            this.buttonStat.Location = new System.Drawing.Point(590, 389);
+            this.buttonStat.Name = "buttonStat";
+            this.buttonStat.Size = new System.Drawing.Size(189, 49);
+            this.buttonStat.TabIndex = 25;
+            this.buttonStat.Text = "Статистика ";
+            this.buttonStat.UseVisualStyleBackColor = true;
+            this.buttonStat.Click += new System.EventHandler(this.buttonStat_Click);
+            // 
             // FormClients
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.buttonStat);
             this.Controls.Add(this.buttonUpdate);
             this.Controls.Add(this.buttonChangeElement);
             this.Controls.Add(this.buttonDeleteElement);
@@ -97,5 +109,6 @@
         private System.Windows.Forms.Button buttonDeleteElement;
         private System.Windows.Forms.Button buttonChangeElement;
         private System.Windows.Forms.Button buttonUpdate;
+        private System.Windows.Forms.Button buttonStat;
     }
 }

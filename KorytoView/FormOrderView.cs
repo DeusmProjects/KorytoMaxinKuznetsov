@@ -53,7 +53,6 @@ namespace KorytoView
                         dataGridView.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                     }
                     
-
                 }
                 catch (Exception ex)
                 {

@@ -86,5 +86,18 @@ namespace KorytoView
         {
             LoadData();
         }
+
+        private void buttonStat_Click(object sender, EventArgs e)
+        {
+            if (dataGridView.SelectedRows.Count == 1)
+            {
+                var form = Container.Resolve<FormClientStat>();
+                form.Id = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    LoadData();
+                }
+            }
+        }
     }
 }
