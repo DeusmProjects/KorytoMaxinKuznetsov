@@ -22,7 +22,7 @@ namespace KorytoWeb.Controllers
         // GET: Orders/Details/5
         public ActionResult Details(int id)
         {
-            Order order = service.GetElement(id);
+            OrderViewModel order = service.GetElement(id);
             if (order == null)
             {
                 return HttpNotFound();

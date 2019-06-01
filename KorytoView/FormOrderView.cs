@@ -29,9 +29,9 @@ namespace KorytoView
             {
                 try
                 {                
-                    Order order = mainService.GetElement(id.Value);
+                    OrderViewModel order = mainService.GetElement(id.Value);
 
-                    List<OrderCar> carOrder = order.OrderCars;
+                    List<OrderCarViewModel> carOrder = order.OrderCars;
 
                     pointsOfOrder = new List<OrderCarViewModel>();
 
@@ -39,7 +39,7 @@ namespace KorytoView
                     {
                         pointsOfOrder.Add(new OrderCarViewModel
                         {
-                            CarName = element.Car.CarName,
+                            CarName = element.CarName,
                             Amount = element.Amount
                         });
                     }

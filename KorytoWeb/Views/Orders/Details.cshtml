@@ -1,4 +1,4 @@
-﻿@model KorytoModel.Order
+﻿@model KorytoServiceDAL.ViewModel.OrderViewModel
 
 @{
     ViewBag.Title = "Просмотр заказа";
@@ -16,7 +16,7 @@
             </dt>
 
             <dd>
-                @Html.DisplayFor(model => model.Client.ClientFIO)
+                @Html.DisplayFor(model => model.ClientFIO)
             </dd>
 
             <dt>
@@ -32,7 +32,7 @@
             </dt>
 
             <dd>
-                @Html.DisplayFor(model => model.OrderStatus)
+                @Html.DisplayFor(model => model.StatusOrder)
             </dd>
 
             <dt>
@@ -68,7 +68,7 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Car.CarName)
+                        @Html.DisplayFor(modelItem => item.CarName)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Amount)

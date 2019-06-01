@@ -125,18 +125,35 @@ namespace KorytoServiceImplementDataBase.Implementations
             return result;
         }
 
-        public Order GetElement(int id)
+        public OrderViewModel GetElement(int id)
         {
-            Order order = context.Orders.FirstOrDefault(
-                record => record.Id == id);
+            Order element = context.Orders.FirstOrDefault(rec => rec.Id == id);
 
-            if (order != null)
+            if (element != null)
             {
-
-                return order;
-
+                return new OrderViewModel
+                {
+                    Id = element.Id,
+                    ClientId = element.ClientId,
+                    ClientFIO = element.Client.ClientFIO,
+                    TotalSum = element.TotalSum,
+                    StatusOrder = element.OrderStatus.ToString(),
+                    DateCreate = element.DateCreate.ToString(),
+                    DateImplement = element.DateImplement.ToString(),
+                    OrderCars = context.OrderCars
+                     .Where(recOC => recOC.OrderId == element.Id)
+                     .Select(recOC => new OrderCarViewModel
+                     {
+                         Id = recOC.Id,
+                         OrderId = recOC.OrderId,
+                         CarId = recOC.CarId,
+                         CarName = recOC.Car.CarName,
+                         Amount = recOC.Amount
+                     })
+                     .ToList()
+                };
             }
-            throw new Exception("Автомобиль не найден");
+            throw new Exception("Элемент не найден");
         }
 
         public void PayOrder(OrderBindingModel model)
@@ -200,21 +217,15 @@ namespace KorytoServiceImplementDataBase.Implementations
 
                         if (check >= 0)
                         {
-
                             detail.TotalReserve += reserveDetails;
-
                         }
                         else
                         {
-
                             throw new Exception("Недостаточно деталей для резервации");
-
                         }
 
                         context.SaveChanges();
                     }
-
-
                     transaction.Commit();
 
                     var client = context.Clients.FirstOrDefault(x => x.Id == model.ClientId);

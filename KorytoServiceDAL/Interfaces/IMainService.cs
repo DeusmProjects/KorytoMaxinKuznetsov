@@ -11,7 +11,7 @@ namespace KorytoServiceDAL.Interfaces
 
         List<OrderViewModel> GetClientOrders(int clientId);
 
-        Order GetElement(int id);
+        OrderViewModel GetElement(int id);
 
         void CreateOrder(OrderBindingModel model);
 
