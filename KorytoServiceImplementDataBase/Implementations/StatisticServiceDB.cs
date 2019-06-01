@@ -14,7 +14,7 @@ namespace KorytoServiceImplementDataBase.Implementations
             this.context = context;
         }
 
-        public string GetMostPopularCar()
+        public (string name, int count) GetMostPopularCar()
         {
             var most = context.OrderCars
                 .GroupBy(rec => rec.CarId)
@@ -26,7 +26,7 @@ namespace KorytoServiceImplementDataBase.Implementations
 
             int count = most.Total;
 
-            return name + " в количестве " + count + " машин";
+            return (name, count);
         }
 
         public int HowManyCarTheClient(int clientId)

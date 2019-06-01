@@ -2,7 +2,7 @@
 {
     public interface IStatistic
     {
-        string GetMostPopularCar();
+        (string, int) GetMostPopularCar();
 
         decimal AverageCustomerCheck(int clientId);
 
