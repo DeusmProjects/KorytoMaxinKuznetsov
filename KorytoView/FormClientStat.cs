@@ -18,9 +18,9 @@ namespace KorytoView
         public new IUnityContainer Container { get; set; }
         public int Id { set { id = value; } }
         private int? id;
-        private readonly IStatService statistic;
+        private readonly IStatistic statistic;
 
-        public FormClientStat(IStatService statistic)
+        public FormClientStat(IStatistic statistic)
         {
             InitializeComponent();
             this.statistic = statistic;
