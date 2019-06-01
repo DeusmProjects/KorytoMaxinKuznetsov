@@ -1,32 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
-using System.Web;
-using System.Web.Mvc;
-using KorytoModel;
-using KorytoServiceDAL.BindingModel;
+﻿using KorytoServiceDAL.BindingModel;
 using KorytoServiceDAL.Interfaces;
 using KorytoServiceDAL.ViewModel;
-using KorytoServiceImplementDataBase;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
 
 namespace KorytoWeb.Controllers
 {
     public class OrderController : Controller
     {
-        private IMainService service = Globals.MainService;
-        private ICarService carService = Globals.CarService;
-        private IStatisticService statistic = Globals.StatisticService;
+        private readonly IMainService service = Globals.MainService;
+        private readonly ICarService carService = Globals.CarService;
+        private readonly IStatisticService statistic = Globals.StatisticService;
 
         // GET: Vouchers
         public ActionResult Index()
         {
             if (Session["Order"] == null)
             {
-                var order = new OrderViewModel();
-                order.OrderCars = new List<OrderCarViewModel>();
+                var order = new OrderViewModel {OrderCars = new List<OrderCarViewModel>()};
                 Session["Order"] = order;
             }
             ViewBag.Service = statistic;

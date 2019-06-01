@@ -32,9 +32,9 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public int GetClientCarsCount(int clientId)
         {
-            var clientOrders = context.Orders.Where(order => order.ClientId == clientId);
-
-            clientOrders.Where(rec => rec.OrderCars)
+            return context.Orders
+                .Where(order => order.ClientId == clientId)
+                .Sum(order => order.OrderCars.Sum(x => x.Amount));
         }
 
         public decimal AverageCustomerCheck(int clientId)

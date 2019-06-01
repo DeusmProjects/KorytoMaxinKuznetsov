@@ -10,8 +10,7 @@ namespace KorytoServiceImplementDataBase.Implementations
 {
     public class CarServiceDB : ICarService
     {
-
-        KorytoDbContext context;
+        readonly KorytoDbContext context;
 
         public CarServiceDB(KorytoDbContext context)
         {
@@ -24,8 +23,7 @@ namespace KorytoServiceImplementDataBase.Implementations
             {
                 try
                 {
-                    Car car = context.Cars.FirstOrDefault(
-                        record => record.CarName == model.CarName);
+                    var car = context.Cars.FirstOrDefault(record => record.CarName == model.CarName);
 
                     if (car != null)
                     {
@@ -38,7 +36,6 @@ namespace KorytoServiceImplementDataBase.Implementations
                             CarName = model.CarName,
                             Price = model.Price,
                             Year = model.Year
-                           
                         };
                     }
                    
@@ -79,8 +76,7 @@ namespace KorytoServiceImplementDataBase.Implementations
             {
                 try
                 {
-                    Car car = context.Cars.FirstOrDefault(
-                        record => record.Id == id);
+                    var car = context.Cars.FirstOrDefault(record => record.Id == id);
 
                     if (car != null)
                     {
@@ -108,8 +104,7 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public CarViewModel GetElement(int id)
         {
-            Car car = context.Cars.FirstOrDefault(
-                record => record.Id == id);
+            var car = context.Cars.FirstOrDefault(record => record.Id == id);
 
             if (car != null)
             {
@@ -123,8 +118,8 @@ namespace KorytoServiceImplementDataBase.Implementations
 
                     Year = car.Year,
 
-                    CarDetails = context.CarDetails.Where(
-                        recordCD => recordCD.CarId == car.Id)
+                    CarDetails = context.CarDetails
+                        .Where(recordCD => recordCD.CarId == car.Id)
                         .Select(recCD => new CarDetailViewModel
                         {
                             Id = recCD.Id,
@@ -142,7 +137,7 @@ namespace KorytoServiceImplementDataBase.Implementations
         {
             var result = new List<CarViewModel>();
 
-            List<CarViewModel> cars = context.Cars.Select(rec => new CarViewModel
+            var cars = context.Cars.Select(rec => new CarViewModel
             {
                 Id = rec.Id,
                 CarName = rec.CarName,
@@ -205,16 +200,16 @@ namespace KorytoServiceImplementDataBase.Implementations
             {
                 try
                 {
-                    Car car = context.Cars.FirstOrDefault(
-                        record => record.CarName == model.CarName && record.Id != model.Id);
+                    var car = context.Cars
+                        .FirstOrDefault(record => record.CarName == model.CarName && record.Id != model.Id);
 
                     if (car != null)
                     {
                         throw new Exception("Уже есть автомобиль с таким названием");
                     }
 
-                    car = context.Cars.FirstOrDefault(
-                        record => record.Id == model.Id);
+                    car = context.Cars
+                        .FirstOrDefault(record => record.Id == model.Id);
 
                     if (car == null)
                     {
@@ -235,31 +230,26 @@ namespace KorytoServiceImplementDataBase.Implementations
 
                     foreach (var updateDetail in updateDetails)
                     {
-                        updateDetail.Amount = model.CarDetails.FirstOrDefault(
-                            record => record.Id == updateDetail.Id)
-                            .Amount;
+                        updateDetail.Amount = model.CarDetails.FirstOrDefault(record => record.Id == updateDetail.Id).Amount;
                     }
 
                     context.SaveChanges();
 
-                    context.CarDetails.RemoveRange(context.CarDetails.Where(
-                        record => record.CarId == model.Id && !IDs.Contains(record.DetailId)));
+                    context.CarDetails
+                        .RemoveRange(context.CarDetails
+                            .Where(record => record.CarId == model.Id && !IDs.Contains(record.DetailId)));
 
                     context.SaveChanges();
 
-                    var groupDetails = model.CarDetails.Where(
-                        record => record.Id == 0)
+                    var groupDetails = model.CarDetails
+                        .Where(record => record.Id == 0)
                         .GroupBy(record => record.DetailId)
-                        .Select(record => new
-                        {
-                            detailId = record.Key,
-                            amount = record.Sum(r => r.Amount)
-                        });
+                        .Select(record => new {detailId = record.Key, amount = record.Sum(r => r.Amount)});
 
                     foreach (var groupDetail in groupDetails)
                     {
-                        CarDetail detail = context.CarDetails.FirstOrDefault(
-                            record => record.CarId == model.Id && record.DetailId == groupDetail.detailId);
+                        var detail = context.CarDetails
+                            .FirstOrDefault(record => record.CarId == model.Id && record.DetailId == groupDetail.detailId);
 
                         if (detail != null)
                         {

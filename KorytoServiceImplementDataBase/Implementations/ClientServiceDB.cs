@@ -12,7 +12,7 @@ namespace KorytoServiceImplementDataBase.Implementations
 {
     public class ClientServiceDB : IClientService
     {
-        private KorytoDbContext context;
+        private readonly KorytoDbContext context;
 
         public ClientServiceDB(KorytoDbContext context)
         {
@@ -21,11 +21,13 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public void AddElement(ClientBindingModel model)
         {
-            Client element = context.Clients.FirstOrDefault(rec => rec.ClientFIO == model.ClientFIO);
+            var element = context.Clients.FirstOrDefault(rec => rec.ClientFIO == model.ClientFIO);
+
             if (element != null)
             {
                 throw new Exception("Уже есть клиент с таким ФИО");
             }
+
             context.Clients.Add(new Client
             {
                 ClientFIO = model.ClientFIO,
@@ -38,7 +40,7 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public void DeleteElement(int id)
         {
-            Client element = context.Clients.FirstOrDefault(rec => rec.Id == id);
+            var element = context.Clients.FirstOrDefault(rec => rec.Id == id);
             if (element != null)
             {
                 context.Clients.Remove(element);
@@ -52,7 +54,7 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public ClientViewModel GetElement(int id)
         {
-            Client element = context.Clients.FirstOrDefault(rec => rec.Id == id);
+            var element = context.Clients.FirstOrDefault(rec => rec.Id == id);
             if (element != null)
             {
                 return new ClientViewModel
@@ -69,7 +71,7 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public List<ClientViewModel> GetList()
         {
-            List<ClientViewModel> result = context.Clients.Select(rec => new ClientViewModel
+            return context.Clients.Select(rec => new ClientViewModel
             {
                 Id = rec.Id,
                 ClientFIO = rec.ClientFIO,
@@ -77,21 +79,24 @@ namespace KorytoServiceImplementDataBase.Implementations
                 Login = rec.Login,
                 Password = rec.Password
             }).ToList();
-            return result;
         }
 
         public void UpdateElement(ClientBindingModel model)
         {
-            Client element = context.Clients.FirstOrDefault(rec => rec.ClientFIO == model.ClientFIO && rec.Id != model.Id);
+            var element = context.Clients.FirstOrDefault(rec => rec.ClientFIO == model.ClientFIO && rec.Id != model.Id);
+
             if (element != null)
             {
                 throw new Exception("Уже есть клиент с таким ФИО");
             }
+
             element = context.Clients.FirstOrDefault(rec => rec.Id == model.Id);
+
             if (element == null)
             {
                 throw new Exception("Элемент не найден");
             }
+
             element.ClientFIO = model.ClientFIO;
             element.Mail = model.Mail;
             element.Login = model.Login;

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity.SqlServer;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -15,7 +16,7 @@ namespace KorytoServiceImplementDataBase.Implementations
 {
     public class MainServiceDB : IMainService
     {
-        private KorytoDbContext context;
+        private readonly KorytoDbContext context;
 
         public MainServiceDB(KorytoDbContext context)
         {
@@ -28,7 +29,7 @@ namespace KorytoServiceImplementDataBase.Implementations
             {
                 try
                 {
-                    Order element = new Order
+                    var element = new Order
                     {
                         ClientId = model.ClientId,
                         DateCreate = DateTime.Now,
@@ -37,15 +38,11 @@ namespace KorytoServiceImplementDataBase.Implementations
                     };
                     context.Orders.Add(element);
                     context.SaveChanges();
-                    // убираем дубли по машинам
+
                     var groupCars = model.OrderCars
-                     .GroupBy(rec => rec.CarId)
-                    .Select(rec => new
-                    {
-                        CarId = rec.Key,
-                        Amount = rec.Sum(r => r.Amount)
-                    });
-                    // добавляем компоненты
+                        .GroupBy(rec => rec.CarId)
+                        .Select(rec => new { CarId = rec.Key, Amount = rec.Sum(r => r.Amount) });
+
                     foreach (var groupCar in groupCars)
                     {
                         context.OrderCars.Add(new OrderCar
@@ -68,65 +65,64 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public void FinishOrder(OrderBindingModel model)
         {
-            Order element = context.Orders.FirstOrDefault(rec => rec.Id == model.Id);
+            var element = context.Orders.FirstOrDefault(rec => rec.Id == model.Id);
+
             if (element == null)
             {
                 throw new Exception("Элемент не найден");
             }
+
             if (element.OrderStatus != OrderStatus.Выполняется)
             {
                 throw new Exception("Заказ не в статусе \"Выполняется\"");
             }
+
             element.OrderStatus = OrderStatus.Готов;
             context.SaveChanges();
         }
 
         public List<OrderViewModel> GetClientOrders(int clientId)
         {
-            var orders = GetList();
-
-            var result = orders.Where(rec => rec.ClientId == clientId).Select(rec => rec).ToList();
-
-            return result;
+            return GetList().Where(order => order.ClientId == clientId).ToList();
         }
 
         public List<OrderViewModel> GetList()
         {
-            List<OrderViewModel> result = context.Orders.Select(rec => new OrderViewModel
+            var result = context.Orders.Select(rec => new OrderViewModel
             {
                 Id = rec.Id,
                 ClientId = rec.ClientId,
-                DateCreate = SqlFunctions.DateName("dd", rec.DateCreate) + " " +
-            SqlFunctions.DateName("mm", rec.DateCreate) + " " +
-            SqlFunctions.DateName("yyyy", rec.DateCreate),
-                DateImplement = rec.DateImplement == null ? "" :
-            SqlFunctions.DateName("dd",
-           rec.DateImplement.Value) + " " +
-            SqlFunctions.DateName("mm",
-           rec.DateImplement.Value) + " " +
-            SqlFunctions.DateName("yyyy",
-            rec.DateImplement.Value),
+                DateCreate =
+                    SqlFunctions.DateName("dd", rec.DateCreate) + " " + SqlFunctions.DateName("mm", rec.DateCreate) +
+                    " " + SqlFunctions.DateName("yyyy", rec.DateCreate),
+                DateImplement =
+                    rec.DateImplement == null
+                        ? ""
+                        : SqlFunctions.DateName("dd", rec.DateImplement.Value) + " " +
+                          SqlFunctions.DateName("mm", rec.DateImplement.Value) + " " +
+                          SqlFunctions.DateName("yyyy", rec.DateImplement.Value),
                 StatusOrder = rec.OrderStatus.ToString(),
                 TotalSum = rec.TotalSum,
                 ClientFIO = rec.Client.ClientFIO,
-                OrderCars = context.OrderCars
-                .Where(recPC => recPC.OrderId == rec.Id)
-                .Select(recPC => new OrderCarViewModel
-                {
-                    Id = recPC.Id,
-                    CarId = recPC.CarId,
-                    OrderId = recPC.OrderId,
-                    CarName = recPC.Car.CarName,
-                    Amount = recPC.Amount
-                }).ToList()
-            }).ToList();
+                OrderCars = context.OrderCars.Where(recPC => recPC.OrderId == rec.Id)
+                    .Select(recPC => new OrderCarViewModel
+                    {
+                        Id = recPC.Id,
+                        CarId = recPC.CarId,
+                        OrderId = recPC.OrderId,
+                        CarName = recPC.Car.CarName,
+                        Amount = recPC.Amount
+                    })
+                    .ToList()
+            })
+                .ToList();
 
             return result;
         }
 
         public OrderViewModel GetElement(int id)
         {
-            Order element = context.Orders.FirstOrDefault(rec => rec.Id == id);
+            var element = context.Orders.FirstOrDefault(rec => rec.Id == id);
 
             if (element != null)
             {
@@ -137,19 +133,18 @@ namespace KorytoServiceImplementDataBase.Implementations
                     ClientFIO = element.Client.ClientFIO,
                     TotalSum = element.TotalSum,
                     StatusOrder = element.OrderStatus.ToString(),
-                    DateCreate = element.DateCreate.ToString(),
+                    DateCreate = element.DateCreate.ToString(CultureInfo.InvariantCulture),
                     DateImplement = element.DateImplement.ToString(),
-                    OrderCars = context.OrderCars
-                     .Where(recOC => recOC.OrderId == element.Id)
-                     .Select(recOC => new OrderCarViewModel
-                     {
-                         Id = recOC.Id,
-                         OrderId = recOC.OrderId,
-                         CarId = recOC.CarId,
-                         CarName = recOC.Car.CarName,
-                         Amount = recOC.Amount
-                     })
-                     .ToList()
+                    OrderCars = context.OrderCars.Where(recOC => recOC.OrderId == element.Id)
+                        .Select(recOC => new OrderCarViewModel
+                        {
+                            Id = recOC.Id,
+                            OrderId = recOC.OrderId,
+                            CarId = recOC.CarId,
+                            CarName = recOC.Car.CarName,
+                            Amount = recOC.Amount
+                        })
+                        .ToList()
                 };
             }
             throw new Exception("Элемент не найден");
@@ -157,7 +152,7 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public void PayOrder(OrderBindingModel model)
         {
-            Order element = context.Orders.FirstOrDefault(rec => rec.Id == model.Id);
+            var element = context.Orders.FirstOrDefault(rec => rec.Id == model.Id);
             if (element == null)
             {
                 throw new Exception("Элемент не найден");
@@ -176,7 +171,7 @@ namespace KorytoServiceImplementDataBase.Implementations
             {
                 try
                 {
-                    Order element = new Order
+                    var element = new Order
                     {
                         ClientId = model.ClientId,
                         DateCreate = DateTime.Now,
@@ -187,17 +182,13 @@ namespace KorytoServiceImplementDataBase.Implementations
                     context.Orders.Add(element);
                     context.SaveChanges();
 
-                    var groupCars = model.OrderCars.GroupBy(rec => rec.CarId)
-                        .Select(rec => new
-                        {
-                            CarId = rec.Key,
-                            Amount = rec.Sum(r => r.Amount)
-                        });
-
+                    var groupCars = model.OrderCars
+                        .GroupBy(rec => rec.CarId)
+                        .Select(rec => new {CarId = rec.Key, Amount = rec.Sum(r => r.Amount)});
 
                     foreach (var groupCar in groupCars)
                     {
-                        OrderCar orderCar = new OrderCar
+                        var orderCar = new OrderCar
                         {
                             OrderId = element.Id,
                             CarId = groupCar.CarId,
@@ -206,13 +197,13 @@ namespace KorytoServiceImplementDataBase.Implementations
 
                         context.OrderCars.Add(orderCar);
 
-                        CarDetail carDetail = context.CarDetails.FirstOrDefault(rec => rec.CarId == orderCar.CarId);
+                        var carDetail = context.CarDetails.FirstOrDefault(rec => rec.CarId == orderCar.CarId);
 
-                        Detail detail = context.Details.FirstOrDefault(rec => rec.Id == carDetail.DetailId);
+                        var detail = context.Details.FirstOrDefault(rec => rec.Id == carDetail.DetailId);
 
-                        int reserveDetails = carDetail.Amount;
+                        var reserveDetails = carDetail.Amount;
 
-                        int check = detail.TotalAmount - reserveDetails;
+                        var check = detail.TotalAmount - reserveDetails;
 
                         if (check >= 0)
                         {
@@ -228,8 +219,9 @@ namespace KorytoServiceImplementDataBase.Implementations
                     transaction.Commit();
 
                     var client = context.Clients.FirstOrDefault(x => x.Id == model.ClientId);
-                    SendEmail(client.Mail, "Оповещение по заказам", string.Format("Заказ №{0} от {1} зарезервирован успешно",
-                        element.Id, element.DateCreate.ToShortDateString()));
+
+                    SendEmail(client?.Mail, "Оповещение по заказам",
+                        $"Заказ №{element.Id} от {element.DateCreate.ToShortDateString()} зарезервирован успешно");
                 }
                 catch (Exception)
                 {
@@ -245,8 +237,7 @@ namespace KorytoServiceImplementDataBase.Implementations
             SmtpClient objSmtpClient = null;
             try
             {
-                objMailMessage.From = new
-               MailAddress(ConfigurationManager.AppSettings["MailLogin"]);
+                objMailMessage.From = new MailAddress(ConfigurationManager.AppSettings["MailLogin"]);
                 objMailMessage.To.Add(new MailAddress(mailAddress));
                 objMailMessage.Subject = subject;
                 objMailMessage.Body = text;
@@ -256,9 +247,8 @@ namespace KorytoServiceImplementDataBase.Implementations
                 objSmtpClient.UseDefaultCredentials = false;
                 objSmtpClient.EnableSsl = true;
                 objSmtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                objSmtpClient.Credentials = new
-               NetworkCredential(ConfigurationManager.AppSettings["MailLogin"],
-               ConfigurationManager.AppSettings["MailPassword"]);
+                objSmtpClient.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["MailLogin"],
+                    ConfigurationManager.AppSettings["MailPassword"]);
                 objSmtpClient.Send(objMailMessage);
             }
             catch (Exception ex)
@@ -278,7 +268,8 @@ namespace KorytoServiceImplementDataBase.Implementations
             {
                 try
                 {
-                    Order element = context.Orders.FirstOrDefault(rec => rec.Id == model.Id);
+                    var element = context.Orders.FirstOrDefault(rec => rec.Id == model.Id);
+
                     if (element == null)
                     {
                         throw new Exception("Элемент не найден");
@@ -286,17 +277,17 @@ namespace KorytoServiceImplementDataBase.Implementations
 
                     if (element.OrderStatus == OrderStatus.Принят || element.OrderStatus == OrderStatus.Зарезервирован)
                     {
-                        var orderCars = context.OrderCars.Where(rec => rec.OrderId == element.Id).Select(car => car);
+                        var orderCars = context.OrderCars.Where(rec => rec.OrderId == element.Id);
 
                         foreach (var orderCar in orderCars)
                         {
-                            var carDetails = context.CarDetails.Where(rec => rec.CarId == orderCar.CarId).Select(det => det);
+                            var carDetails = context.CarDetails.Where(rec => rec.CarId == orderCar.CarId);
                             foreach (var carDetail in carDetails)
                             {
                                 if (element.OrderStatus == OrderStatus.Принят)
                                 {
 
-                                    int countDetails = carDetail.Detail.TotalAmount;
+                                    var countDetails = carDetail.Detail.TotalAmount;
 
                                     if (carDetail.Amount > countDetails)
                                     {
@@ -311,9 +302,8 @@ namespace KorytoServiceImplementDataBase.Implementations
 
                                 }
 
-                                if (element.OrderStatus == OrderStatus.Зарезервирован)
+                                if (element.OrderStatus != OrderStatus.Зарезервирован) continue;
                                 {
-
                                     int countDetails = carDetail.Detail.TotalReserve;
 
                                     if (carDetail.Amount > countDetails)

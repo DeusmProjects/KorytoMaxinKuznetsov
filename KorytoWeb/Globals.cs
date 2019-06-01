@@ -14,7 +14,6 @@ namespace KorytoWeb
         public static IMainService MainService { get; } = new MainServiceDB(DbContext);
         public static IRequestService RequestService { get; } = new RequestServiceDB(DbContext);
         public static IStatisticService StatisticService { get; } = new StatisticServiceDB(DbContext);
-
         public static ClientViewModel AuthClient { get; set; } = null;
     }
 }

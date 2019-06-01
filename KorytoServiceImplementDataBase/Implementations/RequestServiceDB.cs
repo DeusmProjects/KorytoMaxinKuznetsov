@@ -10,8 +10,7 @@ namespace KorytoServiceImplementDataBase.Implementations
 {
     public class RequestServiceDB : IRequestService
     {
-
-        KorytoDbContext context;
+        readonly KorytoDbContext context;
 
         public RequestServiceDB(KorytoDbContext context)
         {
@@ -26,7 +25,7 @@ namespace KorytoServiceImplementDataBase.Implementations
                 try
                 {
 
-                    Request request = new Request
+                    var request = new Request
                     {
                         DateCreate = model.DateCreate
                     };
@@ -34,16 +33,13 @@ namespace KorytoServiceImplementDataBase.Implementations
                     context.Requests.Add(request);
                     context.SaveChanges();
 
-                    var groupDetails = model.DetailRequests.GroupBy(record => record.DetailId)
-                        .Select(record => new
-                        {
-                            detailId = record.Key,
-                            amount = record.Sum(r => r.Amount)
-                        });
+                    var groupDetails = model.DetailRequests
+                        .GroupBy(record => record.DetailId)
+                        .Select(record => new {detailId = record.Key, amount = record.Sum(r => r.Amount)});
 
                     foreach (var gr in groupDetails)
                     {
-                        DetailRequest detailRequest = new DetailRequest
+                        var detailRequest = new DetailRequest
                         {
                             RequestId = request.Id,
                             DetailId = gr.detailId,
@@ -53,13 +49,11 @@ namespace KorytoServiceImplementDataBase.Implementations
                         context.DetailRequests.Add(detailRequest);
                         context.SaveChanges();
 
-                        Detail updateDetail = context.Details.FirstOrDefault(record => record.Id == detailRequest.DetailId);
+                        var updateDetail = context.Details.FirstOrDefault(record => record.Id == detailRequest.DetailId);
 
-                        if (updateDetail != null)
-                        {
-                            updateDetail.TotalAmount += detailRequest.Amount;
-                            context.SaveChanges();
-                        }
+                        if (updateDetail == null) continue;
+                        updateDetail.TotalAmount += detailRequest.Amount;
+                        context.SaveChanges();
                     }
 
                     transaction.Commit();
@@ -80,7 +74,7 @@ namespace KorytoServiceImplementDataBase.Implementations
             {
                 try
                 {
-                    Request request = context.Requests.FirstOrDefault(record => record.Id == id);
+                    var request = context.Requests.FirstOrDefault(record => record.Id == id);
 
                     if (request != null)
                     {
@@ -106,7 +100,7 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public RequestViewModel GetElement(int id)
         {
-            Request request = context.Requests.FirstOrDefault(
+            var request = context.Requests.FirstOrDefault(
                 record => record.Id == id);
 
             if (request != null)
@@ -117,13 +111,14 @@ namespace KorytoServiceImplementDataBase.Implementations
                     DateCreate = request.DateCreate,
                     DetailRequests = context.DetailRequests
                         .Where(record => record.RequestId == request.Id)
-                            .Select(recPC => new DetailRequestViewModel
-                            {
-                                Id = recPC.Id,
-                                DetailId = recPC.DetailId,
-                                RequestId = recPC.RequestId,
-                                Amount = recPC.Amount
-                            }).ToList()
+                        .Select(recPC => new DetailRequestViewModel
+                        {
+                            Id = recPC.Id,
+                            DetailId = recPC.DetailId,
+                            RequestId = recPC.RequestId,
+                            Amount = recPC.Amount
+                        })
+                        .ToList()
                 };
 
             }
@@ -132,20 +127,22 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public List<RequestViewModel> GetList()
         {
-            List<RequestViewModel> result = context.Requests.Select(record => new RequestViewModel
-            {
-                Id = record.Id,
-                DateCreate = record.DateCreate,
-
-                DetailRequests = context.DetailRequests.Where(r => r.RequestId == record.Id).Select(r => new DetailRequestViewModel
+            var result = context.Requests.Select(record => new RequestViewModel
                 {
-                    Id = r.Id,
-                    DetailId = r.DetailId,
-                    RequestId = r.RequestId,
-                    Amount = r.Amount
-                }).ToList()
-
-            }).ToList();
+                    Id = record.Id,
+                    DateCreate = record.DateCreate,
+                    DetailRequests = context.DetailRequests
+                        .Where(r => r.RequestId == record.Id)
+                        .Select(r => new DetailRequestViewModel
+                        {
+                            Id = r.Id,
+                            DetailId = r.DetailId,
+                            RequestId = r.RequestId,
+                            Amount = r.Amount
+                        })
+                        .ToList()
+                })
+                .ToList();
 
             return result;
         }      

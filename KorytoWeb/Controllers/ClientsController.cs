@@ -8,12 +8,12 @@ namespace KorytoWeb.Controllers
 {
     public class ClientsController : Controller
     {
-        public IClientService service = Globals.ClientService;
+        public IClientService Service = Globals.ClientService;
 
         // GET: Clients
         public ActionResult Index()
         {
-            return View(service.GetList());
+            return View(Service.GetList());
         }
 
         public ActionResult Auth()
@@ -25,24 +25,13 @@ namespace KorytoWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Auth([Bind(Include = "Login, Password")] Client client)
         {
-            if (service.GetList().Any(rec => rec.Login == client.Login && rec.Password == client.Password))
+            if (Service.GetList().Any(rec => rec.Login == client.Login && rec.Password == client.Password))
             {
-                var authClient = service.GetList().FirstOrDefault(cl => cl.Login == client.Login);
+                var authClient = Service.GetList().FirstOrDefault(cl => cl.Login == client.Login);
                 Globals.AuthClient = authClient;
                 return RedirectToAction("Index", "Orders");
             }
 
-            return View(client);
-        }
-
-        // GET: Clients/Details/5
-        public ActionResult Details(int id)
-        {
-            var client = service.GetElement(id);
-            if (client == null)
-            {
-                return HttpNotFound();
-            }
             return View(client);
         }
 
@@ -58,23 +47,23 @@ namespace KorytoWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var clientDB = service.GetList().FirstOrDefault(rec =>
+                var clientDB = Service.GetList().FirstOrDefault(rec =>
                         rec.ClientFIO == client.ClientFIO ||
                         rec.Login == client.Login ||
                         rec.Mail == client.Mail);
 
-                if (clientDB == null)
+                if (clientDB != null) return View(client);
+
+                Service.AddElement(new ClientBindingModel
                 {
-                    service.AddElement(new ClientBindingModel
-                    {
-                        Id = client.Id,
-                        ClientFIO = client.ClientFIO,
-                        Login = client.Login,
-                        Password = client.Password,
-                        Mail = client.Mail
-                    });
-                    return RedirectToAction("Auth", "Clients");
-                }
+                    Id = client.Id,
+                    ClientFIO = client.ClientFIO,
+                    Login = client.Login,
+                    Password = client.Password,
+                    Mail = client.Mail
+                });
+
+                return RedirectToAction("Auth", "Clients");
             }
 
             return View(client);

@@ -10,7 +10,7 @@ namespace KorytoServiceImplementDataBase.Implementations
 {
     public class DetailServiceDB : IDetailService
     {
-        KorytoDbContext context;
+        readonly KorytoDbContext context;
 
         public DetailServiceDB(KorytoDbContext context)
         {
@@ -19,8 +19,7 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public void AddElement(DetailBindingModel model)
         {
-            Detail detail = context.Details.FirstOrDefault(
-                record => record.DetailName == model.DetailName);
+            var detail = context.Details.FirstOrDefault(record => record.DetailName == model.DetailName);
 
             if (detail != null)
             {
@@ -38,7 +37,7 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public void DeleteElement(int id)
         {
-            Detail detail = context.Details.FirstOrDefault(
+            var detail = context.Details.FirstOrDefault(
                 record => record.Id == id);
 
             if (detail != null)
@@ -54,8 +53,7 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public DetailViewModel GetElement(int id)
         {
-            Detail detail = context.Details.FirstOrDefault(
-                record => record.Id == id);
+            var detail = context.Details.FirstOrDefault(record => record.Id == id);
 
             if (detail != null)
             {
@@ -64,7 +62,7 @@ namespace KorytoServiceImplementDataBase.Implementations
                     Id = detail.Id,
                     DetailName = detail.DetailName,
                     TotalAmount = detail.TotalAmount
-            };
+                };
 
             }
             throw new Exception("Деталь не найдена");
@@ -72,28 +70,24 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public List<DetailViewModel> GetList()
         {
-            List<DetailViewModel> result = context.Details.Select(record => new DetailViewModel
+            return context.Details.Select(record => new DetailViewModel
             {
                 Id = record.Id,
                 DetailName = record.DetailName,
                 TotalAmount = record.TotalAmount
             }).ToList();
-
-            return result;
         }
 
         public void UpdateElement(DetailBindingModel model)
         {
-            Detail detail = context.Details.FirstOrDefault(
-                record => record.DetailName == model.DetailName && record.Id != model.Id);
+            var detail = context.Details.FirstOrDefault(record => record.DetailName == model.DetailName && record.Id != model.Id);
 
             if (detail != null)
             {
                 throw new Exception("Уже есть деталь");
             }
 
-            detail = context.Details.FirstOrDefault(
-                rec => rec.Id == model.Id);
+            detail = context.Details.FirstOrDefault(rec => rec.Id == model.Id);
 
             if (detail == null)
             {

@@ -5,23 +5,23 @@ namespace KorytoWeb.Controllers
 {
     public class CarsController : Controller
     {
-        public ICarService service = Globals.CarService;
+        public ICarService Service = Globals.CarService;
 
         // GET: Cars
         public ActionResult Index()
         {
-            return View(service.GetList());
+            return View(Service.GetList());
         }
 
         public ActionResult Filter()
         {
-            return View(service.GetFilteredList());
+            return View(Service.GetFilteredList());
         }
 
         // GET: Cars/Details/5
         public ActionResult Details(int id)
         {
-            var car = service.GetElement(id);
+            var car = Service.GetElement(id);
 
             if (car == null)
             {

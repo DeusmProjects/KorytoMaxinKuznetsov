@@ -1,15 +1,11 @@
 ﻿using KorytoServiceDAL.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace KorytoWeb.Controllers
 {
     public class UserController : Controller
     {
-        IStatisticService service = Globals.StatisticService;
+        readonly IStatisticService service = Globals.StatisticService;
         // GET: User
         public ActionResult Index()
         {
