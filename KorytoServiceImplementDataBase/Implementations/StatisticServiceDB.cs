@@ -1,11 +1,5 @@
-﻿using KorytoModel;
-using KorytoServiceDAL.Interfaces;
-using KorytoServiceDAL.ViewModel;
-using System;
-using System.Collections.Generic;
+﻿using KorytoServiceDAL.Interfaces;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KorytoServiceImplementDataBase.Implementations
 {
