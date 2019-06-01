@@ -63,7 +63,7 @@ namespace KorytoServiceImplementDataBase.Implementations
                 summary += orderClient.TotalSum;
             }
 
-            return summary;
+            return summary / ordersClient.Count;
         }
 
 
@@ -76,13 +76,25 @@ namespace KorytoServiceImplementDataBase.Implementations
             .GroupBy(rec => rec.CarId)
             .Select(rec => new { Id = rec.Key, Total = rec.Sum(x => x.Amount) })
             .OrderByDescending(rec => rec.Total)
-            .First();
+            .FirstOrDefault();
 
-            string name = context.Cars.FirstOrDefault(rec => rec.Id == most.Id).CarName;
+            if(most != null)
+            {
+                string name = context.Cars.FirstOrDefault(rec => rec.Id == most.Id).CarName;
 
-            int count = most.Total;
+                int count = most.Total;
 
-            return name + " в количестве " + count + " машин"; ;
+                return name + " в количестве " + count + " машин"; ;
+            }
+            else
+            {
+                return "У Вас не было заказов";
+            }
+        }
+
+        public decimal GetAverPrice()
+        { 
+            return context.Orders.Sum(rec => rec.TotalSum) / context.Orders.Count();
         }
     }
 }

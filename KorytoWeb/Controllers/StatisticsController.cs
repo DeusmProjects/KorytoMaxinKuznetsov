@@ -14,7 +14,7 @@ namespace KorytoWeb.Controllers
         // GET: Statisics
         public ActionResult Index()
         {
-            ViewBag.MostPopularCar = service.GetMostPopularCar();
+            ViewBag.Service = service;
             return View();
         }
     }

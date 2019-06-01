@@ -19,6 +19,7 @@
             <p>
                 @Html.ActionLink("Добавить автомобиль", "AddCar")
             </p>
+            <p>В последнее время Вы чаще всего заказывали @ViewBag.Service.PopularCar(Globals.AuthClient.Id) . Не хотите приобрести еще?</p>
             <table class="table">
                 <tr>
                     <th>

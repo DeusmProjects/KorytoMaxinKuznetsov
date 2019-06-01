@@ -4,9 +4,13 @@ using KorytoServiceDAL.Interfaces;
 using KorytoServiceDAL.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Data.Entity.SqlServer;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.Text;
 
 namespace KorytoServiceImplementDataBase.Implementations
 {
@@ -184,6 +188,8 @@ namespace KorytoServiceImplementDataBase.Implementations
                             Amount = groupCar.Amount
                         };
 
+                        context.OrderCars.Add(orderCar);
+
                         CarDetail carDetail = context.CarDetails.FirstOrDefault(rec => rec.CarId == orderCar.CarId);
 
                         Detail detail = context.Details.FirstOrDefault(rec => rec.Id == carDetail.DetailId);
@@ -210,14 +216,50 @@ namespace KorytoServiceImplementDataBase.Implementations
 
 
                     transaction.Commit();
+
+                    var client = context.Clients.FirstOrDefault(x => x.Id == model.ClientId);
+                    SendEmail(client.Mail, "Оповещение по заказам", string.Format("Заказ №{0} от {1} зарезервирован успешно",
+                        element.Id, element.DateCreate.ToShortDateString()));
                 }
                 catch (Exception)
                 {
                     transaction.Rollback();
-                    throw;
                 }
             }
 
+        }
+
+        private void SendEmail(string mailAddress, string subject, string text)
+        {
+            MailMessage objMailMessage = new MailMessage();
+            SmtpClient objSmtpClient = null;
+            try
+            {
+                objMailMessage.From = new
+               MailAddress(ConfigurationManager.AppSettings["MailLogin"]);
+                objMailMessage.To.Add(new MailAddress(mailAddress));
+                objMailMessage.Subject = subject;
+                objMailMessage.Body = text;
+                objMailMessage.SubjectEncoding = Encoding.UTF8;
+                objMailMessage.BodyEncoding = Encoding.UTF8;
+                objSmtpClient = new SmtpClient("smtp.gmail.com", 587);
+                objSmtpClient.UseDefaultCredentials = false;
+                objSmtpClient.EnableSsl = true;
+                objSmtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                objSmtpClient.Credentials = new
+               NetworkCredential(ConfigurationManager.AppSettings["MailLogin"],
+               ConfigurationManager.AppSettings["MailPassword"]);
+                objSmtpClient.Send(objMailMessage);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                objMailMessage = null;
+                objSmtpClient = null;
+            }
         }
 
         public void TakeOrderInWork(OrderBindingModel model)

@@ -7,7 +7,11 @@
 
 <div>
     <div class="form-group">
-        <label>Самая покупаемая машина: @ViewBag.MostPopularCar</label>
+        <label>Самая покупаемая машина: @ViewBag.Service.MostPopularCar()</label>
+    </div>
+
+    <div class="form-group">
+        <label>Средний чек заказа: @ViewBag.Service.GetAverPrice()</label>
     </div>
 </div>
 

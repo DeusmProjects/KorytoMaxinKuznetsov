@@ -1,13 +1,12 @@
 ﻿@model KorytoServiceDAL.ViewModel.CarViewModel
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Просмотр машины";
 }
 
-<h2>Details</h2>
+<h2>Просмотр машины</h2>
 
 <div>
-    <h4>CarViewModel</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -35,8 +34,32 @@
         </dd>
 
     </dl>
+
+    <table class="table">
+        <tr>
+            <th>
+                Деталь
+            </th>
+            <th>
+                Количество
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model.CarDetails)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DetailName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Amount)
+                </td>
+            </tr>
+        }
+
+    </table>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Вернуться к списку машин", "Index")
 </p>

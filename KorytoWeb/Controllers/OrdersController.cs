@@ -1,4 +1,5 @@
 ﻿using KorytoModel;
+using KorytoServiceDAL.BindingModel;
 using KorytoServiceDAL.Interfaces;
 using KorytoServiceDAL.ViewModel;
 using KorytoServiceImplementDataBase;
@@ -19,14 +20,25 @@ namespace KorytoWeb.Controllers
         }
 
         // GET: Orders/Details/5
-        //public ActionResult Details(int id)
-        //{
-        //    OrderViewModel order = service.Get;
-        //    if (order == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    return View(order);
-        //}
+        public ActionResult Details(int id)
+        {
+            Order order = service.GetElement(id);
+            if (order == null)
+            {
+                return HttpNotFound();
+            }
+            return View(order);
+        }
+
+
+        public ActionResult Pay(int id)
+        {
+            service.PayOrder(new OrderBindingModel
+            {
+                ClientId = Globals.AuthClient.Id,
+                Id = id
+            });
+            return View();
+        }
     }
 }

@@ -195,6 +195,7 @@
     <Content Include="Views\Order\Reserve.cshtml" />
     <Content Include="Views\Statistics\Index.cshtml" />
     <Content Include="Views\User\Index.cshtml" />
+    <Content Include="Views\Orders\Pay.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

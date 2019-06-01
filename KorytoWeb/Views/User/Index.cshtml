@@ -25,5 +25,35 @@
         <label>Пароль: </label>
         <span>@ViewBag.User.Password</span>
     </div>
+
+    <label>Статистика пользователя</label>
+
+    <table class="table">
+        <tr>
+            <th>
+                Всего машин заказано
+            </th>
+            <th>
+               "Любимая" машина
+            </th>
+            <th>
+                Средний чек
+            </th>
+            <th></th>
+        </tr>
+
+        <tr>
+            <td>
+                @ViewBag.Service.HowManyCarTheClient(ViewBag.User.Id)
+            </td>
+            <td>
+                @ViewBag.Service.PopularCar(ViewBag.User.Id)
+            </td>
+            <td>
+                @ViewBag.Service.AverageCustomerCheck(ViewBag.User.Id)
+            </td>
+        </tr>
+
+    </table>
 </div>
 

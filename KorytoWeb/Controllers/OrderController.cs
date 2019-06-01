@@ -18,6 +18,7 @@ namespace KorytoWeb.Controllers
     {
         private IMainService service = Globals.MainService;
         private ICarService carService = Globals.CarService;
+        private IStatistic statistic = Globals.StatisticService;
 
         // GET: Vouchers
         public ActionResult Index()
@@ -28,6 +29,7 @@ namespace KorytoWeb.Controllers
                 order.OrderCars = new List<OrderCarViewModel>();
                 Session["Order"] = order;
             }
+            ViewBag.Service = statistic;
             return View((OrderViewModel)Session["Order"]);
         }
 

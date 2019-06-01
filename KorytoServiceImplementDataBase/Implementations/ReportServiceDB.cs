@@ -100,11 +100,7 @@ namespace KorytoServiceImplementDataBase.Implementations
                 HorizontalAlignment = Element.ALIGN_CENTER
             });
 
-            table.AddCell(new PdfPCell(new Phrase("Изделие", fontForCellBold))
-            {
-                HorizontalAlignment = Element.ALIGN_CENTER
-            });
-            table.AddCell(new PdfPCell(new Phrase("Количество", fontForCellBold))
+            table.AddCell(new PdfPCell(new Phrase("Машины", fontForCellBold))
             {
                 HorizontalAlignment = Element.ALIGN_CENTER
             });
