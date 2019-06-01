@@ -58,7 +58,7 @@
     <Compile Include="Interfaces\IMainService.cs" />
     <Compile Include="Interfaces\IReportService.cs" />
     <Compile Include="Interfaces\IRequestService.cs" />
-    <Compile Include="Interfaces\IStatistic.cs" />
+    <Compile Include="Interfaces\IStatisticService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\CarDetailViewModel.cs" />
     <Compile Include="ViewModel\CarViewModel.cs" />

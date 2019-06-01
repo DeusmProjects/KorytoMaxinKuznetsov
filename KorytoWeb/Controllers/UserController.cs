@@ -9,7 +9,7 @@ namespace KorytoWeb.Controllers
 {
     public class UserController : Controller
     {
-        IStatistic service = Globals.StatisticService;
+        IStatisticService service = Globals.StatisticService;
         // GET: User
         public ActionResult Index()
         {

@@ -1,12 +1,12 @@
 ﻿namespace KorytoServiceDAL.Interfaces
 {
-    public interface IStatistic
+    public interface IStatisticService
     {
-        (string, int) GetMostPopularCar();
+        (string name, int count) GetMostPopularCar();
 
         decimal AverageCustomerCheck(int clientId);
 
-        int HowManyCarTheClient(int clientId);
+        int GetClientCarsCount(int clientId);
 
         string PopularCar(int clientId);
     }

@@ -1,5 +1,6 @@
 ﻿using KorytoModel;
 using System.Data.Entity;
+using System.Data.Entity.SqlServer;
 
 namespace KorytoServiceImplementDataBase
 {
@@ -7,9 +8,9 @@ namespace KorytoServiceImplementDataBase
     {
         public KorytoDbContext()
         {
-            //Configuration.ProxyCreationEnabled = false;
-            //Configuration.LazyLoadingEnabled = false;
-            //var ensureDLLIsCopied = System.Data.Entity.SqlServer.SqlProviderServices.Instance;
+            Configuration.ProxyCreationEnabled = false;
+            Configuration.LazyLoadingEnabled = false;
+            var ensureDllIsCopied = SqlProviderServices.Instance;
         }
 
         public virtual DbSet<Client> Clients { get; set; }

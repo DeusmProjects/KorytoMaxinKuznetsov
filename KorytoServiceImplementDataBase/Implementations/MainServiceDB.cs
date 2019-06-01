@@ -5,7 +5,6 @@ using KorytoServiceDAL.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Data.Entity;
 using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Net;
@@ -284,7 +283,7 @@ namespace KorytoServiceImplementDataBase.Implementations
                     {
                         throw new Exception("Элемент не найден");
                     }
-                   
+
                     if (element.OrderStatus == OrderStatus.Принят || element.OrderStatus == OrderStatus.Зарезервирован)
                     {
                         var orderCars = context.OrderCars.Where(rec => rec.OrderId == element.Id).Select(car => car);

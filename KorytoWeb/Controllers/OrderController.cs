@@ -18,7 +18,7 @@ namespace KorytoWeb.Controllers
     {
         private IMainService service = Globals.MainService;
         private ICarService carService = Globals.CarService;
-        private IStatistic statistic = Globals.StatisticService;
+        private IStatisticService statistic = Globals.StatisticService;
 
         // GET: Vouchers
         public ActionResult Index()
