@@ -1,4 +1,6 @@
-﻿using KorytoServiceDAL.Interfaces;
+﻿using KorytoModel;
+using KorytoServiceDAL.Interfaces;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace KorytoServiceImplementDataBase.Implementations
