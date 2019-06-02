@@ -77,6 +77,7 @@ namespace KorytoServiceImplementDataBase.Implementations
                 throw new Exception("Заказ не в статусе \"Выполняется\"");
             }
 
+            element.DateImplement = DateTime.Now;
             element.OrderStatus = OrderStatus.Готов;
             context.SaveChanges();
         }
@@ -130,7 +131,7 @@ namespace KorytoServiceImplementDataBase.Implementations
                 {
                     Id = element.Id,
                     ClientId = element.ClientId,
-                    ClientFIO = element.Client.ClientFIO,
+                    ClientFIO = context.Clients.FirstOrDefault(client => client.Id == element.ClientId).ClientFIO,
                     TotalSum = element.TotalSum,
                     StatusOrder = element.OrderStatus.ToString(),
                     DateCreate = element.DateCreate.ToString(CultureInfo.InvariantCulture),
@@ -286,8 +287,8 @@ namespace KorytoServiceImplementDataBase.Implementations
                             {
                                 if (element.OrderStatus == OrderStatus.Принят)
                                 {
-
-                                    var countDetails = carDetail.Detail.TotalAmount;
+                                    var countDetails = context.Details
+                                        .FirstOrDefault(detail => detail.Id == carDetail.DetailId).TotalAmount;
 
                                     if (carDetail.Amount > countDetails)
                                     {
@@ -295,11 +296,12 @@ namespace KorytoServiceImplementDataBase.Implementations
                                     }
                                     else
                                     {
-                                        carDetail.Detail.TotalAmount -= carDetail.Amount;
+                                        context.Details
+                                            .FirstOrDefault(detail => detail.Id == carDetail.DetailId).TotalAmount -= carDetail.Amount;
+
                                         context.SaveChanges();
                                         break;
                                     }
-
                                 }
 
                                 if (element.OrderStatus != OrderStatus.Зарезервирован) continue;
@@ -320,7 +322,6 @@ namespace KorytoServiceImplementDataBase.Implementations
                             }
                         }
 
-                        element.DateImplement = DateTime.Now;
                         element.OrderStatus = OrderStatus.Выполняется;
                         context.SaveChanges();
                         transaction.Commit();

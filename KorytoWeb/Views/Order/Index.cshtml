@@ -1,5 +1,4 @@
-﻿@using KorytoModel
-@model KorytoServiceDAL.ViewModel.OrderViewModel
+﻿@model KorytoServiceDAL.ViewModel.OrderViewModel
 
 @{
     ViewBag.Title = "Создание заказа";
@@ -7,7 +6,6 @@
 }
 
 <h2>Создание заказа</h2>
-
 
 @using (Html.BeginForm("CreateOrderPost", "Order", FormMethod.Post))
 {
@@ -19,7 +17,10 @@
             <p>
                 @Html.ActionLink("Добавить автомобиль", "AddCar")
             </p>
-            <p>В последнее время Вы чаще всего заказывали @ViewBag.Service.PopularCar(Globals.AuthClient.Id) . Не хотите приобрести еще?</p>
+            @if (ViewBag.Service.GetPopularCarClient(Globals.AuthClient.Id) != null)
+            {
+                <p>В последнее время Вы чаще всего заказывали @ViewBag.Service.PopularCar(Globals.AuthClient.Id). Не хотите приобрести еще?</p>
+            }
             <table class="table">
                 <tr>
                     <th>
