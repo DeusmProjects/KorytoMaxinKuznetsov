@@ -22,7 +22,6 @@ namespace KorytoServiceImplementDataBase.Implementations
                 .OrderByDescending(rec => rec.Total)
                 .First();
 
-
             var name = context.Cars.FirstOrDefault(rec => rec.Id == most.Id)?.CarName;
 
             var count = most.Total;
@@ -37,7 +36,7 @@ namespace KorytoServiceImplementDataBase.Implementations
                 .Sum(order => order.OrderCars.Sum(x => x.Amount));
         }
 
-        public decimal AverageCustomerCheck(int clientId)
+        public decimal GetAverageCustomerCheck(int clientId)
         { 
             return context.Orders
                .Where(order => order.ClientId == clientId)
@@ -45,11 +44,10 @@ namespace KorytoServiceImplementDataBase.Implementations
         }
 
 
-        public string PopularCar(int clientId)
+        public (string name, int count) GetPopularCarClient(int clientId)
         {
-            var clientCars = context.OrderCars.Where(rec => rec.Order.ClientId == clientId).Select(rec => rec);
-
-            var most = clientCars
+            var most = context.OrderCars
+                .Where(rec => rec.Order.ClientId == clientId)
                 .GroupBy(rec => rec.CarId)
                 .Select(rec => new { Id = rec.Key, Total = rec.Sum(x => x.Amount) })
                 .OrderByDescending(rec => rec.Total)
@@ -61,11 +59,11 @@ namespace KorytoServiceImplementDataBase.Implementations
 
                 var count = most.Total;
 
-                return name + " в количестве " + count + " машин"; ;
+                return (name, count);
             }
             else
             {
-                return "У Вас не было заказов";
+                return (name: null, count: 0);
             }
         }
 

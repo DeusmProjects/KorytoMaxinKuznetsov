@@ -4,10 +4,10 @@
     {
         (string name, int count) GetMostPopularCar();
 
-        decimal AverageCustomerCheck(int clientId);
+        decimal GetAverageCustomerCheck(int clientId);
 
         int GetClientCarsCount(int clientId);
 
-        string PopularCar(int clientId);
+        (string name, int count) GetPopularCarClient(int clientId);
     }
 }

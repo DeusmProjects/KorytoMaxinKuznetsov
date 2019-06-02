@@ -30,13 +30,13 @@ namespace KorytoView
             if (!id.HasValue) return;
             try
             {
-                var average = statistic.AverageCustomerCheck(id.Value);
+                var average = statistic.GetAverageCustomerCheck(id.Value);
                 textBoxAverage.Text = average.ToString(CultureInfo.InvariantCulture);
 
                 var countAllCars = statistic.GetClientCarsCount(id.Value);
                 textBoxAllCars.Text = countAllCars.ToString();
 
-                var popCar = statistic.PopularCar(id.Value);
+                var popCar = statistic.GetPopularCarClient(id.Value).name;
                 textBoxPopular.Text = popCar;
 
             }
