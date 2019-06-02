@@ -22,5 +22,7 @@ namespace KorytoServiceDAL.Interfaces
         void PayOrder(OrderBindingModel model);
 
         void ReserveOrder(OrderBindingModel model);
+
+        void SaveDataBase();
     }
 }

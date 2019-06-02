@@ -3,13 +3,16 @@ using KorytoServiceDAL.BindingModel;
 using KorytoServiceDAL.Interfaces;
 using KorytoServiceDAL.ViewModel;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity.SqlServer;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
+using System.Runtime.Serialization.Json;
 using System.Text;
 
 namespace KorytoServiceImplementDataBase.Implementations
@@ -336,6 +339,16 @@ namespace KorytoServiceImplementDataBase.Implementations
                     transaction.Rollback();
                     throw;
                 }
+            }
+        }
+
+        public void SaveDataBase()
+        {
+            var jsonFormatter = new DataContractJsonSerializer(typeof(List<Order>));
+
+            using (FileStream fs = new FileStream("db.json", FileMode.OpenOrCreate))
+            {
+                jsonFormatter.WriteObject(fs, context.Orders.ToList());
             }
         }
     }

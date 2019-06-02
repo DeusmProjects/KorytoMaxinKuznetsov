@@ -1,15 +1,21 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 
 namespace KorytoModel
 {
+    [DataContract]
     public class CarDetail
     {
+        [DataMember]
         public int Id { get; set; }
 
+        [DataMember]
         public int CarId { get; set; }
 
+        [DataMember]
         public int DetailId { get; set; }
 
+        [DataMember]
         [Required]
         public int Amount { get; set; }
 
