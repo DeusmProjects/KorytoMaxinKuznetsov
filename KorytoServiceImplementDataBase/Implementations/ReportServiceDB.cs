@@ -89,12 +89,76 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         private static void PrintOrderInfo(ClientOrdersViewModel clientOrder, Document doc)
         {
+            PdfPTable table = new PdfPTable(4);
+            PdfPCell cell = new PdfPCell();
+            cell.Colspan = 4;
+            cell.HorizontalAlignment = Element.ALIGN_CENTER; //0=Left, 1=Centre, 2=Right
+            table.AddCell(cell);
+            table.SetTotalWidth(new float[] { 160, 140, 160, 100 });
 
+            var fontForCellBold = new Font(baseFont, 10, Font.BOLD);
+
+            table.AddCell(new PdfPCell(new Phrase("ФИО клиента", fontForCellBold))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            table.AddCell(new PdfPCell(new Phrase("Сумма заказа", fontForCellBold))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            table.AddCell(new PdfPCell(new Phrase("Дата заказа", fontForCellBold))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            table.AddCell(new PdfPCell(new Phrase("Статус", fontForCellBold))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            var fontForCells = new Font(baseFont, 10);
+
+            table.AddCell(new PdfPCell(new Phrase(clientOrder.ClientName, fontForCells)));
+
+            table.AddCell(new PdfPCell(new Phrase(clientOrder.TotalSum.ToString(), fontForCells)));
+
+            table.AddCell(new PdfPCell(new Phrase(clientOrder.DateCreateOrder, fontForCells)));
+
+            table.AddCell(new PdfPCell(new Phrase(clientOrder.StatusOrder, fontForCells)));
+
+            foreach (var car in clientOrder.OrderCars)
+            {
+                PrintOrderCars(car, doc);
+            }
         }
 
         private static void PrintOrderCars(OrderCarViewModel orderCars, Document doc)
         {
+            PdfPTable table = new PdfPTable(3);
+            PdfPCell cell = new PdfPCell();
+            cell.Colspan = 3;
+            cell.HorizontalAlignment = Element.ALIGN_CENTER; //0=Left, 1=Centre, 2=Right
+            table.AddCell(cell);
+            table.SetTotalWidth(new float[] { 160, 140, 160 });
 
+            var fontForCellBold = new Font(baseFont, 10, Font.BOLD);
+
+            table.AddCell(new PdfPCell(new Phrase("Название машины", fontForCellBold))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            table.AddCell(new PdfPCell(new Phrase("Количество", fontForCellBold))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            table.AddCell(new PdfPCell(new Phrase("Комплектации", fontForCellBold))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
         }
 
         private void PrintCarDetails(CarDetailViewModel carDetails, Document doc)
