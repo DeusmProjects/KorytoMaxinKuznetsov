@@ -50,17 +50,11 @@ namespace KorytoView
             form.ShowDialog();
         }
 
-      
-        //TODO : создать формочку и генератор отчетов
-        private void покупкиToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Создать формочку и генератор отчетов", "TODO :", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        //TODO : создать формочку и генератор отчетов
+        
         private void заявкиToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Создать формочку и генератор отчетов", "TODO :", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            var form = Container.Resolve<FormReport>();
+            form.ShowDialog();
         }
 
         private void buttonUpdate_Click(object sender, EventArgs e)

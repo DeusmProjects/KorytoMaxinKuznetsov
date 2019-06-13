@@ -68,6 +68,7 @@
     <Compile Include="ViewModel\DetailViewModel.cs" />
     <Compile Include="ViewModel\OrderCarViewModel.cs" />
     <Compile Include="ViewModel\OrderViewModel.cs" />
+    <Compile Include="ViewModel\RequestLoadViewModel.cs" />
     <Compile Include="ViewModel\RequestViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
