@@ -47,7 +47,8 @@
                 @ViewBag.Service.GetClientCarsCount(ViewBag.User.Id)
             </td>
             <td>
-                @ViewBag.Service.GetPopularCarClient(ViewBag.User.Id).name
+                @ViewBag.Service.GetPopularCarClient(ViewBag.User.Id).Item1 
+                ( @ViewBag.Service.GetPopularCarClient(ViewBag.User.Id).Item2 )
             </td>
             <td>
                 @ViewBag.Service.GetAverageCustomerCheck(ViewBag.User.Id)

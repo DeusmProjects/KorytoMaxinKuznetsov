@@ -17,10 +17,10 @@
             <p>
                 @Html.ActionLink("Добавить автомобиль", "AddCar")
             </p>
-            @if (ViewBag.Service.GetPopularCarClient(Globals.AuthClient.Id).name != null)
+            @if (ViewBag.Service.GetPopularCarClient(Globals.AuthClient.Id).Item1 != null)
             {
-                <p>В последнее время Вы чаще всего заказывали @ViewBag.Service.PopularCar(Globals.AuthClient.Id).name в количестве  
-                    @ViewBag.Service.PopularCar(Globals.AuthClient.Id).count. Не хотите приобрести еще?</p>
+                <p>В последнее время Вы чаще всего заказывали @ViewBag.Service.GetPopularCarClient(Globals.AuthClient.Id).Item1 в количестве  
+                    @ViewBag.Service.GetPopularCarClient(Globals.AuthClient.Id).Item2. Не хотите приобрести еще?</p>
             }
             <table class="table">
                 <tr>

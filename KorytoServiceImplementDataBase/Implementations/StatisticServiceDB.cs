@@ -1,6 +1,4 @@
-﻿using KorytoModel;
-using KorytoServiceDAL.Interfaces;
-using System.Collections.Generic;
+﻿using KorytoServiceDAL.Interfaces;
 using System.Linq;
 
 namespace KorytoServiceImplementDataBase.Implementations
@@ -31,16 +29,36 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public int GetClientCarsCount(int clientId)
         {
-            return context.Orders
-                .Where(order => order.ClientId == clientId)
-                .Sum(order => order.OrderCars.Sum(x => x.Amount));
+            int clientCars = context.Orders
+                .Count(order => order.ClientId == clientId);
+
+            if (clientCars != 0)
+            {
+                return context.Orders
+                    .Where(order => order.ClientId == clientId)
+                    .Sum(order => order.OrderCars.Sum(x => x.Amount));
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         public decimal GetAverageCustomerCheck(int clientId)
-        { 
-            return context.Orders
-               .Where(order => order.ClientId == clientId)
-               .Average(order => order.TotalSum);
+        {
+            int clientCars = context.Orders
+                .Count(order => order.ClientId == clientId);
+
+            if (clientCars != 0)
+            {
+                return context.Orders
+                    .Where(order => order.ClientId == clientId)
+                    .Average(order => order.TotalSum);
+            }
+            else
+            {
+                return 0;
+            }
         }
 
 
@@ -53,7 +71,7 @@ namespace KorytoServiceImplementDataBase.Implementations
                 .OrderByDescending(rec => rec.Total)
                 .FirstOrDefault();
 
-            if(most != null)
+            if (most != null)
             {
                 var name = context.Cars.FirstOrDefault(rec => rec.Id == most.Id)?.CarName;
 
