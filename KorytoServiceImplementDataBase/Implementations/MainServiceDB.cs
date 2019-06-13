@@ -134,7 +134,7 @@ namespace KorytoServiceImplementDataBase.Implementations
                 {
                     Id = element.Id,
                     ClientId = element.ClientId,
-                    ClientFIO = context.Clients.FirstOrDefault(client => client.Id == element.ClientId).ClientFIO,
+                    ClientFIO = context.Clients.FirstOrDefault(client => client.Id == element.ClientId)?.ClientFIO,
                     TotalSum = element.TotalSum,
                     StatusOrder = element.OrderStatus.ToString(),
                     DateCreate = element.DateCreate.ToString(CultureInfo.InvariantCulture),
@@ -344,12 +344,30 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public void SaveDataBase()
         {
-            var jsonFormatter = new DataContractJsonSerializer(typeof(List<Order>));
+            SaveEntity(context.Orders.ToList());
+            SaveEntity(context.Cars.ToList());
+            SaveEntity(context.Clients.ToList());
+            SaveEntity(context.Details.ToList());
+            SaveEntity(context.OrderCars.ToList());
+            SaveEntity(context.CarDetails.ToList());
+            SaveEntity(context.DetailRequests.ToList());
+            SaveEntity(context.Requests.ToList());
+        }
 
-            using (FileStream fs = new FileStream("db.json", FileMode.OpenOrCreate))
+        private static void SaveEntity(IEnumerable entity)
+        {
+            var jsonFormatter = new DataContractJsonSerializer(entity.GetType());
+
+            using (var fs = new FileStream($"backup/{GetNameEntity(entity)}.json",
+                FileMode.OpenOrCreate))
             {
-                jsonFormatter.WriteObject(fs, context.Orders.ToList());
+                jsonFormatter.WriteObject(fs, entity);
             }
+        }
+
+        private static string GetNameEntity(IEnumerable entity)
+        {
+            return entity.AsQueryable().ElementType.ToString().Split('.')[1];
         }
     }
 }

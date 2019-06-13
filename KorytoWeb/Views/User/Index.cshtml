@@ -44,13 +44,13 @@
 
         <tr>
             <td>
-                @ViewBag.Service.HowManyCarTheClient(ViewBag.User.Id)
+                @ViewBag.Service.GetClientCarsCount(ViewBag.User.Id)
             </td>
             <td>
-                @ViewBag.Service.PopularCar(ViewBag.User.Id)
+                @ViewBag.Service.GetPopularCarClient(ViewBag.User.Id).name
             </td>
             <td>
-                @ViewBag.Service.AverageCustomerCheck(ViewBag.User.Id)
+                @ViewBag.Service.GetAverageCustomerCheck(ViewBag.User.Id)
             </td>
         </tr>
 

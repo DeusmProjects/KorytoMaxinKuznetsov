@@ -9,5 +9,7 @@
         int GetClientCarsCount(int clientId);
 
         (string name, int count) GetPopularCarClient(int clientId);
+
+        decimal GetAverageCheck();
     }
 }

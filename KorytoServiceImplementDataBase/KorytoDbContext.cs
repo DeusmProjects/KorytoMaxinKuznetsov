@@ -6,7 +6,7 @@ namespace KorytoServiceImplementDataBase
 {
     public class KorytoDbContext : DbContext
     {
-        public KorytoDbContext()
+        public KorytoDbContext() : base("KorytoDataBase")
         {
             Configuration.ProxyCreationEnabled = false;
             Configuration.LazyLoadingEnabled = false;

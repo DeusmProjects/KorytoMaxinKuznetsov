@@ -67,7 +67,7 @@ namespace KorytoServiceImplementDataBase.Implementations
             }
         }
 
-        public decimal GetAverPrice()
+        public decimal GetAverageCheck()
         { 
             return context.Orders.Average(order => order.TotalSum);
         }
