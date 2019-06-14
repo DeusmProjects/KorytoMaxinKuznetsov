@@ -25,11 +25,12 @@ namespace KorytoServiceImplementDataBase.Implementations
             this.context = context;
         }
 
-        public List<ClientOrdersViewModel> GetClientOrders(ReportBindingModel model)
+        public List<ClientOrdersViewModel> GetClientOrders(ReportBindingModel model, int clientId)
         {
-            return context.Orders.Include(rec => rec.Client)
+            return context.Orders
+                //.Include(rec => rec.Client)
                 //.Include(rec => rec.OrderCars)
-                .Where(rec => rec.DateCreate >= model.DateFrom && rec.DateCreate <= model.DateTo)
+                .Where(rec => rec.DateCreate >= model.DateFrom && rec.DateCreate <= model.DateTo && rec.ClientId == clientId)
                 .Select(rec => new ClientOrdersViewModel
                 {
                     ClientName = rec.Client.ClientFIO,
@@ -97,24 +98,48 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public void SaveClientOrders(ReportBindingModel model)
         {
+
+            if (!File.Exists("TIMCYR.TTF"))
+            {
+                File.WriteAllBytes("TIMCYR.TTF", Properties.Resources.TIMCYR);
+            }
+
+            FileStream fs = new FileStream(model.FileName, FileMode.OpenOrCreate, FileAccess.Write);
+
             var document = new Document();
 
-            using (var writer = PdfWriter.GetInstance(document, new FileStream(model.FileName, FileMode.Create)))
+            PdfWriter writer = PdfWriter.GetInstance(document, fs);
+
+            baseFont = BaseFont.CreateFont("TIMCYR.TTF", BaseFont.IDENTITY_H,
+                BaseFont.NOT_EMBEDDED);
+
+            document.Open();
+
+            PrintHeader($"Заказы клиента за период с {model.DateFrom} по {model.DateTo}", document);
+
+            var cb = writer.DirectContent;
+
+            var clientOrders = GetClientOrders(model, 1);
+
+            foreach (var order in clientOrders)
             {
-                document.Open();
-
-                PrintHeader("Заказы клиента", document);
-
-                var clientOrders = GetClientOrders(model);
-
-                foreach (var order in clientOrders)
-                {
-                    PrintOrderInfo(order, document);
-                }
+                PrintHeader("Информация по заказу", document);
+                PrintOrderInfo(order, document);
+                DrawLine(cb, document, writer);
             }
+
+            document.Close();
         }
 
-        private static void PrintHeader(string text, Document doc)
+        private void DrawLine(PdfContentByte cb, Document doc, PdfWriter writer)
+        {
+            cb.MoveTo(0, writer.GetVerticalPosition(true) - 20);
+            cb.LineTo(doc.PageSize.Width, writer.GetVerticalPosition(true) - 20);
+            cb.Stroke();
+            doc.Add(Chunk.NEWLINE);
+        }
+
+        private void PrintHeader(string text, Document doc)
         {
             var phraseTitle = new Phrase(text, new Font(baseFont, 16, Font.BOLD));
             Paragraph paragraph = new Paragraph(phraseTitle)
@@ -125,12 +150,14 @@ namespace KorytoServiceImplementDataBase.Implementations
             doc.Add(paragraph);
         }
 
-        private static void PrintOrderInfo(ClientOrdersViewModel clientOrder, Document doc)
+        private void PrintOrderInfo(ClientOrdersViewModel clientOrder, Document doc)
         {
             PdfPTable table = new PdfPTable(4);
-            PdfPCell cell = new PdfPCell();
-            cell.Colspan = 4;
-            cell.HorizontalAlignment = Element.ALIGN_CENTER; //0=Left, 1=Centre, 2=Right
+            PdfPCell cell = new PdfPCell
+            {
+                Colspan = 4,
+                HorizontalAlignment = Element.ALIGN_CENTER //0=Left, 1=Centre, 2=Right
+            };
             table.AddCell(cell);
             table.SetTotalWidth(new float[] { 160, 140, 160, 100 });
 
@@ -158,50 +185,119 @@ namespace KorytoServiceImplementDataBase.Implementations
 
             var fontForCells = new Font(baseFont, 10);
 
-            table.AddCell(new PdfPCell(new Phrase(clientOrder.ClientName, fontForCells)));
+            table.AddCell(new PdfPCell(new Phrase(clientOrder.ClientName, fontForCells))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
 
-            table.AddCell(new PdfPCell(new Phrase(clientOrder.TotalSum.ToString(), fontForCells)));
+            table.AddCell(new PdfPCell(new Phrase(clientOrder.TotalSum.ToString(CultureInfo.InvariantCulture), fontForCells))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
 
-            table.AddCell(new PdfPCell(new Phrase(clientOrder.DateCreateOrder, fontForCells)));
+            table.AddCell(new PdfPCell(new Phrase(clientOrder.DateCreateOrder, fontForCells))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
 
-            table.AddCell(new PdfPCell(new Phrase(clientOrder.StatusOrder, fontForCells)));
+            table.AddCell(new PdfPCell(new Phrase(clientOrder.StatusOrder, fontForCells))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            doc.Add(table);
+
+            PrintHeader("Машины в заказе", doc);
+
+            var tableCar = new PdfPTable(3);
+            var cellCar = new PdfPCell { Colspan = 3, HorizontalAlignment = Element.ALIGN_CENTER };
+            tableCar.AddCell(cellCar);
+            tableCar.SetTotalWidth(new float[] { 60, 40, 180 });
+
+            tableCar.AddCell(new PdfPCell(new Phrase("Название", fontForCellBold))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            tableCar.AddCell(new PdfPCell(new Phrase("Количество", fontForCellBold))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            tableCar.AddCell(new PdfPCell(new Phrase("Комплектации", fontForCellBold))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
 
             foreach (var car in clientOrder.OrderCars)
             {
-                PrintOrderCars(car, doc);
+                PrintOrderCars(car, doc, tableCar);
             }
+
+            doc.Add(tableCar);
         }
 
-        private static void PrintOrderCars(OrderCarViewModel orderCars, Document doc)
+        private void PrintOrderCars(OrderCarViewModel orderCar, Document doc, PdfPTable table)
         {
-            PdfPTable table = new PdfPTable(3);
-            PdfPCell cell = new PdfPCell();
-            cell.Colspan = 3;
-            cell.HorizontalAlignment = Element.ALIGN_CENTER; //0=Left, 1=Centre, 2=Right
-            table.AddCell(cell);
-            table.SetTotalWidth(new float[] { 160, 140, 160 });
-
+            var fontForCells = new Font(baseFont, 10);
             var fontForCellBold = new Font(baseFont, 10, Font.BOLD);
 
-            table.AddCell(new PdfPCell(new Phrase("Название машины", fontForCellBold))
+            table.AddCell(new PdfPCell(new Phrase(orderCar.CarName, fontForCells))
             {
                 HorizontalAlignment = Element.ALIGN_CENTER
             });
 
-            table.AddCell(new PdfPCell(new Phrase("Количество", fontForCellBold))
+            table.AddCell(new PdfPCell(new Phrase(orderCar.Amount.ToString(), fontForCells))
             {
                 HorizontalAlignment = Element.ALIGN_CENTER
             });
 
-            table.AddCell(new PdfPCell(new Phrase("Комплектации", fontForCellBold))
+            var carDetails = context.CarDetails
+                .Where(rec => rec.CarId == orderCar.CarId)
+                .Select(rec => new CarDetailViewModel
+                {
+                    Amount = rec.Amount,
+                    DetailName = rec.Detail.DetailName,
+                    DetailId = rec.DetailId
+                }).ToList();
+
+            var tableDetail = new PdfPTable(2);
+            var cellDet = new PdfPCell { Colspan = 2, HorizontalAlignment = Element.ALIGN_CENTER };
+            tableDetail.AddCell(cellDet);
+            tableDetail.SetTotalWidth(new float[] { 60, 40 });
+
+
+            tableDetail.AddCell(new PdfPCell(new Phrase("Название", fontForCellBold))
             {
                 HorizontalAlignment = Element.ALIGN_CENTER
             });
+
+            tableDetail.AddCell(new PdfPCell(new Phrase("Количество", fontForCellBold))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            foreach (var carDetail in carDetails)
+            {
+                PrintCarDetails(carDetail, doc, tableDetail);
+            }
+
+            table.AddCell(tableDetail);
         }
 
-        private void PrintCarDetails(CarDetailViewModel carDetails, Document doc)
+        private void PrintCarDetails(CarDetailViewModel carDetail, Document doc, PdfPTable table)
         {
+            var fontForCell = new Font(baseFont, 10);
 
+            table.AddCell(new PdfPCell(new Phrase(carDetail.DetailName, fontForCell))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            table.AddCell(new PdfPCell(new Phrase(carDetail.Amount.ToString(), fontForCell))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
         }
 
         public void SaveLoadRequest(List<RequestLoadViewModel> list, string fileName)

@@ -10,7 +10,7 @@ namespace KorytoServiceDAL.Interfaces
 
         void SaveLoadRequest(List<RequestLoadViewModel> list, string fileName);
 
-        List<ClientOrdersViewModel> GetClientOrders(ReportBindingModel model);
+        List<ClientOrdersViewModel> GetClientOrders(ReportBindingModel model, int clientId);
 
         void SaveClientOrders(ReportBindingModel model);
     }
