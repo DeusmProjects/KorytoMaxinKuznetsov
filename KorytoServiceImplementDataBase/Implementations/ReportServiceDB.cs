@@ -10,6 +10,7 @@ using System.Data.Entity.SqlServer;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace KorytoServiceImplementDataBase.Implementations
 {
@@ -299,7 +300,7 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public void SaveLoadRequest(List<RequestLoadViewModel> list, string fileName)
         {
-           
+
             Document doc = new Document(PageSize.A4.Rotate());
 
             using (var writer = PdfWriter.GetInstance(doc, new FileStream(fileName, FileMode.Create)))
@@ -329,7 +330,7 @@ namespace KorytoServiceImplementDataBase.Implementations
                 {
                     if (j == 0)
                     {
-                        cell = new PdfPCell(new PdfPCell(new Phrase("Отчет от : "))
+                        cell = new PdfPCell(new PdfPCell(new Phrase("Request (date) : "))
                         {
                             HorizontalAlignment = Element.ALIGN_CENTER
                         });
@@ -344,22 +345,49 @@ namespace KorytoServiceImplementDataBase.Implementations
                     Table.AddCell(cell);
                 }
 
-                for (int j = 0; j < list[i].DateRequst.Count(); j++)
+                for (int j = 0; j < list[i].Details.Count(); j++)
                 {
+                    RequestLoadViewModel reportElement = list[i];
 
-                }
-            }
-
-
-            for (int i = 0; i < rows; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    cell = new PdfPCell(new PdfPCell(new Phrase("!"))
+                    for (int k = 0; k < 3; k++)
                     {
-                        HorizontalAlignment = Element.ALIGN_CENTER
-                    });
-                    Table.AddCell(cell);
+                        if (j == 0 && k == 0)
+                        {
+                            string date = reportElement.DateRequst;
+                            cell = new PdfPCell(new PdfPCell(new Phrase(date))
+                            {
+                                HorizontalAlignment = Element.ALIGN_CENTER
+                            });
+
+                        }
+                        if (j != 0 && k == 0)
+                        {
+                            cell = new PdfPCell(new PdfPCell(new Phrase(""))
+                            {
+                                HorizontalAlignment = Element.ALIGN_CENTER
+                            });
+
+                        }
+                        if (k == 1)
+                        {
+                            string name = reportElement.Details.ElementAt(j).Item1;
+                            cell = new PdfPCell(new PdfPCell(new Phrase(name))
+                            {
+                                HorizontalAlignment = XElement.ALIGN_CENTER
+                            });
+
+                        }
+                        if (k == 2)
+                        {
+                            string amount = reportElement.Details.ElementAt(j).Item2.ToString();
+                            cell = new PdfPCell(new PdfPCell(new Phrase(amount))
+                            {
+                                HorizontalAlignment = Element.ALIGN_CENTER
+                            });
+
+                        }
+                        Table.AddCell(cell);
+                    }
                 }
             }
 

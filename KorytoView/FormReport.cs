@@ -64,7 +64,7 @@ namespace KorytoView
 
         private void buttonCreateReport_Click(object sender, EventArgs e)
         {
-            list = report.GetDetailReguest(reportModel);
+            list = report.GetLoadRequest(reportModel);
             LoadData(list);
         }
 
@@ -124,7 +124,8 @@ namespace KorytoView
         {
             using (SaveFileDialog saveFile = new SaveFileDialog()
             {
-                Filter = "PDF file|*.pdf", ValidateNames = true
+                Filter = "PDF file|*.pdf",
+                ValidateNames = true
             })
             {
                 if (saveFile.ShowDialog() == DialogResult.OK)
@@ -137,8 +138,8 @@ namespace KorytoView
                     catch (Exception ex)
                     {
                         MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK);
-                    } 
-                   
+                    }
+
                 }
             }
         }
