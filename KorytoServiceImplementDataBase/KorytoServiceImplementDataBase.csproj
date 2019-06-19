@@ -67,6 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Implementations\MailService.cs" />
     <Compile Include="Implementations\StatisticServiceDB.cs" />
     <Compile Include="KorytoDbContext.cs" />
     <Compile Include="Implementations\CarServiceDB.cs" />

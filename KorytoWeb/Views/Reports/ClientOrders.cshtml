@@ -1,16 +1,17 @@
-﻿@model IEnumerable<KorytoServiceDAL.ViewModel.OrderViewModel>
+﻿@model ClientOrders
 
 @{
     ViewBag.Title = "Отчет";
 }
 
-<h2>Отчет клиента за период</h2>
+<h2>Отчет клиента за период с @string.Format("{0:dd.MM.yyyy}", Model.DateFrom) по @string.Format("{0:dd.MM.yyyy}", Model.DateTo)</h2>
 
 @using (Html.BeginForm("SaveClientOrders", "Reports", FormMethod.Post))
 {
     <div class="form-group">
 
-        @foreach (var item in Model)
+        @foreach (var item in Model.Orders
+            .Where(rec => Convert.ToDateTime(rec.DateCreate) >= Model.DateFrom && Convert.ToDateTime(rec.DateCreate) <= Model.DateTo))
         {
             <hr />
             <h3>Информация по заказу</h3>
@@ -103,7 +104,7 @@
         }
 
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Сформировать" class="btn btn-primary" />
+            <input type="submit" value="Отправить на почту" class="btn btn-primary" />
         </div>
     </div>
 }

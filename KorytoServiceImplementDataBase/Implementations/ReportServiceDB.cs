@@ -113,7 +113,7 @@ namespace KorytoServiceImplementDataBase.Implementations
 
             document.Open();
 
-            PrintHeader($"Заказы клиента за период с {model.DateFrom} по {model.DateTo}", document);
+            PrintHeader($"Заказы клиента за период с {string.Format("{0:dd.MM.yyyy}", model.DateFrom)} по {string.Format("{0:dd.MM.yyyy}", model.DateTo)}", document);
 
             var cb = writer.DirectContent;
 

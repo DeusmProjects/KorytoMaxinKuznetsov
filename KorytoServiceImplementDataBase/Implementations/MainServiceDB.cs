@@ -224,8 +224,8 @@ namespace KorytoServiceImplementDataBase.Implementations
 
                     var client = context.Clients.FirstOrDefault(x => x.Id == model.ClientId);
 
-                    SendEmail(client?.Mail, "Оповещение по заказам",
-                        $"Заказ №{element.Id} от {element.DateCreate.ToShortDateString()} зарезервирован успешно");
+                    MailService.SendEmail(client?.Mail, "Оповещение по заказам",
+                        $"Заказ №{element.Id} от {element.DateCreate.ToShortDateString()} зарезервирован успешно", null);
                 }
                 catch (Exception)
                 {
@@ -233,37 +233,6 @@ namespace KorytoServiceImplementDataBase.Implementations
                 }
             }
 
-        }
-
-        private void SendEmail(string mailAddress, string subject, string text)
-        {
-            MailMessage objMailMessage = new MailMessage();
-            SmtpClient objSmtpClient = null;
-            try
-            {
-                objMailMessage.From = new MailAddress(ConfigurationManager.AppSettings["MailLogin"]);
-                objMailMessage.To.Add(new MailAddress(mailAddress));
-                objMailMessage.Subject = subject;
-                objMailMessage.Body = text;
-                objMailMessage.SubjectEncoding = Encoding.UTF8;
-                objMailMessage.BodyEncoding = Encoding.UTF8;
-                objSmtpClient = new SmtpClient("smtp.gmail.com", 587);
-                objSmtpClient.UseDefaultCredentials = false;
-                objSmtpClient.EnableSsl = true;
-                objSmtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                objSmtpClient.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["MailLogin"],
-                    ConfigurationManager.AppSettings["MailPassword"]);
-                objSmtpClient.Send(objMailMessage);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                objMailMessage = null;
-                objSmtpClient = null;
-            }
         }
 
         public void TakeOrderInWork(OrderBindingModel model)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using KorytoServiceDAL.Interfaces;
 using KorytoServiceDAL.ViewModel;
 using KorytoServiceImplementDataBase;
@@ -17,7 +18,6 @@ namespace KorytoWeb
         public static IRequestService RequestService { get; } = new RequestServiceDB(DbContext);
         public static IStatisticService StatisticService { get; } = new StatisticServiceDB(DbContext);
         public static ClientViewModel AuthClient { get; set; } = ClientService.GetElement(1);
-
-        public static List<OrderViewModel> ModelReport { get; set; }
+        public static ClientOrders ModelReport { get; set; }
     }
 }
