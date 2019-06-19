@@ -6,7 +6,6 @@ using KorytoServiceDAL.Interfaces;
 using KorytoServiceDAL.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Data.Entity.SqlServer;
 using System.Globalization;
 using System.IO;
@@ -28,8 +27,6 @@ namespace KorytoServiceImplementDataBase.Implementations
         public List<ClientOrdersViewModel> GetClientOrders(ReportBindingModel model, int clientId)
         {
             return context.Orders
-                //.Include(rec => rec.Client)
-                //.Include(rec => rec.OrderCars)
                 .Where(rec => rec.DateCreate >= model.DateFrom && rec.DateCreate <= model.DateTo && rec.ClientId == clientId)
                 .Select(rec => new ClientOrdersViewModel
                 {
@@ -96,7 +93,7 @@ namespace KorytoServiceImplementDataBase.Implementations
             return result;
         }
 
-        public void SaveClientOrders(ReportBindingModel model)
+        public void SaveClientOrders(ReportBindingModel model, int clientId)
         {
 
             if (!File.Exists("TIMCYR.TTF"))
@@ -119,7 +116,7 @@ namespace KorytoServiceImplementDataBase.Implementations
 
             var cb = writer.DirectContent;
 
-            var clientOrders = GetClientOrders(model, 1);
+            var clientOrders = GetClientOrders(model, clientId);
 
             foreach (var order in clientOrders)
             {
@@ -152,8 +149,8 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         private void PrintOrderInfo(ClientOrdersViewModel clientOrder, Document doc)
         {
-            PdfPTable table = new PdfPTable(4);
-            PdfPCell cell = new PdfPCell
+            var table = new PdfPTable(4);
+            var cell = new PdfPCell
             {
                 Colspan = 4,
                 HorizontalAlignment = Element.ALIGN_CENTER //0=Left, 1=Centre, 2=Right
@@ -279,13 +276,13 @@ namespace KorytoServiceImplementDataBase.Implementations
 
             foreach (var carDetail in carDetails)
             {
-                PrintCarDetails(carDetail, doc, tableDetail);
+                PrintCarDetails(carDetail, tableDetail);
             }
 
             table.AddCell(tableDetail);
         }
 
-        private void PrintCarDetails(CarDetailViewModel carDetail, Document doc, PdfPTable table)
+        private void PrintCarDetails(CarDetailViewModel carDetail, PdfPTable table)
         {
             var fontForCell = new Font(baseFont, 10);
 
