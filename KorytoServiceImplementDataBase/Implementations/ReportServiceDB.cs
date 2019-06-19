@@ -216,7 +216,7 @@ namespace KorytoServiceImplementDataBase.Implementations
                             string name = reportElement.Details.ElementAt(j).Item1;
                             cell = new PdfPCell(new PdfPCell(new Phrase(name))
                             {
-                                HorizontalAlignment = XElement.ALIGN_CENTER
+                                HorizontalAlignment = Element.ALIGN_CENTER
                             });
 
                         }

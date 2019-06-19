@@ -64,7 +64,7 @@ namespace KorytoView
 
         private void buttonCreateReport_Click(object sender, EventArgs e)
         {
-            list = report.GetLoadRequest(reportModel);
+            list = report.GetDetailReguest(reportModel);
             LoadData(list);
         }
 
