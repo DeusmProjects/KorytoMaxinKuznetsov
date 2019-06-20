@@ -85,5 +85,71 @@ namespace KorytoView
         {
             LoadData();
         }
+
+        private void buttonMailExcel_Click(object sender, EventArgs e)
+        {
+            if (dataGridView.SelectedRows.Count == 1)
+            {
+                if (MessageBox.Show("Создать отчет в Excel", "Вопрос", MessageBoxButtons.YesNo,
+               MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    int id = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
+
+                    using (SaveFileDialog saveFile = new SaveFileDialog()
+                    {
+                        Filter = "XLS file|*.xls",
+                        ValidateNames = true
+                    })
+                    {
+                        if (saveFile.ShowDialog() == DialogResult.OK)
+                        {
+                            try
+                            {
+                                request.SaveRequestToExcel(request.GetDetailsRequest(id), saveFile.FileName);
+                                MessageBox.Show("Отчёт успешно сохранен и отправлен получателю", "Информация", MessageBoxButtons.OK);
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK);
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+
+        private void buttonMailWord_Click(object sender, EventArgs e)
+        {
+            if (dataGridView.SelectedRows.Count == 1)
+            {
+                if (MessageBox.Show("Создать отчет в Excel", "Вопрос", MessageBoxButtons.YesNo,
+               MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    int id = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
+
+                    using (SaveFileDialog saveFile = new SaveFileDialog()
+                    {
+                        Filter = "DOC file|*.doc",
+                        ValidateNames = true
+                    })
+                    {
+                        if (saveFile.ShowDialog() == DialogResult.OK)
+                        {
+                            try
+                            {
+                                request.SaveRequestToWord(request.GetDetailsRequest(id), saveFile.FileName);
+                                MessageBox.Show("Отчёт успешно сохранен и отправлен получателю", "Информация", MessageBoxButtons.OK);
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK);
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
     }
 }

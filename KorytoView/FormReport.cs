@@ -19,8 +19,10 @@ namespace KorytoView
         [Dependency]
         public new IUnityContainer Container { get; set; }
         private readonly IReportService report;
+
         private ReportBindingModel reportModel;
-        private List<RequestLoadViewModel> list;
+        private List<LoadRequestReportViewModel> DetailsOrder;
+        private List<LoadOrderReportViewModel> DetailsRequest;
 
         public FormReport(IReportService report)
         {
@@ -64,16 +66,28 @@ namespace KorytoView
 
         private void buttonCreateReport_Click(object sender, EventArgs e)
         {
-            list = report.GetDetailReguest(reportModel);
-            LoadData(list);
+            DetailsOrder = report.GetDetailsRequest(reportModel);
+            DetailsRequest = report.GetDetailsOrder(reportModel);
+            if (DetailsOrder != null && DetailsRequest != null)
+            {
+                MessageBox.Show("Отчёт успешно создан", "Информация", MessageBoxButtons.OK);
+                LoadData(DetailsOrder, DetailsRequest);
+            }
+            else
+            {
+                throw new Exception("Error");
+            }
+
+            LoadData(DetailsOrder, DetailsRequest);
         }
 
-        private void LoadData(List<RequestLoadViewModel> list)
+        private void LoadData(List<LoadRequestReportViewModel> DetailsRequest, List<LoadOrderReportViewModel> DetailsOrder)
         {
             try
             {
-                if (list != null)
+                if (DetailsOrder != null)
                 {
+
                     dataGridView.RowCount = 100;
                     dataGridView.ColumnCount = 3;
 
@@ -87,29 +101,68 @@ namespace KorytoView
                     dataGridView.Columns[2].AutoSizeMode =
                     DataGridViewAutoSizeColumnMode.Fill;
 
-                    int saveIndexRow = 0;
+                    int nextAction = 0;
 
-                    for (int element = 0; element < list.Count; element++)
+                    dataGridView.Rows[nextAction].Cells[1].Value = "Ревизия";
+                    nextAction += 2;
+
+                    dataGridView.Rows[nextAction].Cells[1].Value = "Пополнения";
+                    nextAction += 2;
+
+                    for (int element = 0; element < DetailsRequest.Count; element++)
                     {
-                        RequestLoadViewModel reportElement = list[element];
-
-                        for (int row = saveIndexRow; row < 100; row++)
+                        int rowAction = nextAction;
+                        dataGridView.Rows[rowAction].Cells[0].Value = "Заявка от : ";
+                        rowAction++;
+                        dataGridView.Rows[rowAction].Cells[0].Value = DetailsRequest[element].DateCreate;
+                        rowAction++;
+                        dataGridView.Rows[rowAction].Cells[0].Value = "Деталь";
+                        dataGridView.Rows[rowAction].Cells[1].Value = "Количество";
+                        dataGridView.Rows[rowAction].Cells[2].Value = "Итог";
+                        rowAction++;
+                        var details = DetailsRequest[element].Details;
+                        foreach (var detail in details)
                         {
-
-                            dataGridView.Rows[row].Cells[0].Value = "Отчет от : ";
-                            row++;
-                            dataGridView.Rows[row].Cells[0].Value = reportElement.DateRequst;
-
-                            for (int record = 0; record < reportElement.Details.Count(); record++)
-                            {
-
-                                dataGridView.Rows[row].Cells[1].Value = reportElement.Details.ElementAt(record).Item1;
-                                dataGridView.Rows[row].Cells[2].Value = reportElement.Details.ElementAt(record).Item2;
-                                row++;
-                            }
-                            saveIndexRow = row;
-                            break;
+                            dataGridView.Rows[rowAction].Cells[0].Value = detail.Item1;
+                            dataGridView.Rows[rowAction].Cells[1].Value = detail.Item2;
+                            dataGridView.Rows[rowAction].Cells[2].Value = detail.Item2;
+                            rowAction++;
                         }
+                        nextAction = rowAction + 1;
+                    }
+
+                    nextAction += 2;
+                    dataGridView.Rows[nextAction].Cells[1].Value = "Расходы";
+                    nextAction += 2;
+
+                    for (int element = 0; element < DetailsOrder.Count; element++)
+                    {
+                        int rowAction = nextAction;
+                        dataGridView.Rows[rowAction].Cells[0].Value = "Заказ №";
+                        dataGridView.Rows[rowAction].Cells[1].Value = DetailsOrder[element].OrderId;
+                        rowAction++;
+                        dataGridView.Rows[rowAction].Cells[0].Value = "Дата : ";
+                        dataGridView.Rows[rowAction].Cells[1].Value = DetailsOrder[element].DateCreate;
+                        rowAction++;
+                        dataGridView.Rows[rowAction].Cells[0].Value = "Авто : ";
+                        dataGridView.Rows[rowAction].Cells[1].Value = DetailsOrder[element].CarName;
+                        rowAction++;
+                        dataGridView.Rows[rowAction].Cells[0].Value = "Количество : ";
+                        dataGridView.Rows[rowAction].Cells[1].Value = DetailsOrder[element].CarAmount;
+                        rowAction++;
+                        dataGridView.Rows[rowAction].Cells[0].Value = "Деталь";
+                        dataGridView.Rows[rowAction].Cells[1].Value = "Количество";
+                        dataGridView.Rows[rowAction].Cells[2].Value = "Итог";
+                        rowAction++;
+                        var details = DetailsOrder[element].Details;
+                        foreach (var detail in details)
+                        {
+                            dataGridView.Rows[rowAction].Cells[0].Value = detail.DetailName;
+                            dataGridView.Rows[rowAction].Cells[1].Value = detail.Amount;
+                            dataGridView.Rows[rowAction].Cells[2].Value = detail.Amount * DetailsOrder[element].CarAmount;
+                            rowAction++;
+                        }
+                        nextAction = rowAction + 1;
                     }
                 }
             }
@@ -132,8 +185,8 @@ namespace KorytoView
                 {
                     try
                     {
-                        report.SaveLoadRequest(list, saveFile.FileName);
-                        MessageBox.Show("Отчёт успешно создан", "Информация", MessageBoxButtons.OK);
+                        report.SaveDetailsReport(DetailsOrder, DetailsRequest, saveFile.FileName, reportModel);
+                        MessageBox.Show("Отчёт успешно сохранен", "Информация", MessageBoxButtons.OK);
                     }
                     catch (Exception ex)
                     {
