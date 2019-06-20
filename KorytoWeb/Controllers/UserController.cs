@@ -13,5 +13,11 @@ namespace KorytoWeb.Controllers
             ViewBag.Service = service;
             return View();
         }
+
+        public ActionResult SaveDataBaseClient()
+        {
+            Globals.MainService.SaveDataBaseClient();
+            return RedirectToAction("Index");
+        }
     }
 }

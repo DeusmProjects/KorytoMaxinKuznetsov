@@ -136,7 +136,7 @@ namespace KorytoView
 
         private void СохранитьБДToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            mainService.SaveDataBase();
+            mainService.SaveDataBaseAdmin();
         }
     }
 }

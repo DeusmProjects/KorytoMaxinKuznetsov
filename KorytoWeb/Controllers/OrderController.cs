@@ -85,7 +85,16 @@ namespace KorytoWeb.Controllers
         {
             var order = (OrderViewModel)Session["Order"];
             order.DateCreate = DateTime.Now.ToShortDateString();
-            order.Id = Globals.DbContext.Orders.Max(rec => rec.Id) + 1;
+
+            if (Globals.DbContext.Orders.Any())
+            {
+                order.Id = Globals.DbContext.Orders.Max(rec => rec.Id) + 1;
+            }
+            else
+            {
+                order.Id = 1;
+            }
+            
             order.ClientId = Globals.AuthClient.Id;
             order.ClientFIO = Globals.AuthClient.ClientFIO;
 

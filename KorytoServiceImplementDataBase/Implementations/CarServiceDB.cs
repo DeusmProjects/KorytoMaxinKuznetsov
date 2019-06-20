@@ -157,16 +157,11 @@ namespace KorytoServiceImplementDataBase.Implementations
 
             foreach (var car in cars)
             {
-                var details = car.CarDetails.Select(rec => new DetailViewModel
-                {
-                    Id = rec.DetailId,
-                    TotalAmount = context.Details.FirstOrDefault(recD => recD.Id == rec.DetailId).TotalAmount
-                }).ToList();
+                var carDetails = context.CarDetails.Where(rec => rec.CarId == car.Id);
 
-                if (details.All(rec => rec.TotalAmount >= car.CarDetails.FirstOrDefault(recCD => recCD.DetailId == rec.Id).Amount))
-                {
-                    result.Add(car);
-                }
+                if (carDetails.Any(rec => rec.Amount > context.Details.FirstOrDefault(det => det.Id == rec.DetailId).TotalAmount)) continue;
+
+                result.Add(car);
             }
 
             return result;

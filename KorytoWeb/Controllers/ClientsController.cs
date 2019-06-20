@@ -31,6 +31,10 @@ namespace KorytoWeb.Controllers
                 Globals.AuthClient = authClient;
                 return RedirectToAction("Index", "Orders");
             }
+            else
+            {
+                return Content("<script language='javascript' type='text/javascript'>alert('Неверные данные');</script>");
+            }
 
             return View(client);
         }
@@ -52,7 +56,8 @@ namespace KorytoWeb.Controllers
                         rec.Login == client.Login ||
                         rec.Mail == client.Mail);
 
-                if (clientDB != null) return View(client);
+                if (clientDB != null)
+                    return Content("<script language='javascript' type='text/javascript'>alert('Уже есть такой клиент');</script>");
 
                 Service.AddElement(new ClientBindingModel
                 {

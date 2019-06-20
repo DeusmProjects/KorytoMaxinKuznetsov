@@ -244,44 +244,43 @@ namespace KorytoServiceImplementDataBase.Implementations
                     {
                         var orderCars = context.OrderCars.Where(rec => rec.OrderId == element.Id);
 
-                        foreach (var orderCar in orderCars)
+                        if (element.OrderStatus == OrderStatus.Принят)
                         {
-                            var carDetails = context.CarDetails.Where(rec => rec.CarId == orderCar.CarId);
-                            foreach (var carDetail in carDetails)
+                            foreach (var orderCar in orderCars)
                             {
-                                if (element.OrderStatus == OrderStatus.Принят)
+                                var carDetails = context.CarDetails.Where(rec => rec.CarId == orderCar.CarId);
+
+                                if (carDetails.Any(rec => rec.Amount > context.Details
+                                                    .FirstOrDefault(det => det.Id == rec.DetailId).TotalAmount))
                                 {
-                                    var countDetails = context.Details
-                                        .FirstOrDefault(detail => detail.Id == carDetail.DetailId).TotalAmount;
-
-                                    if (carDetail.Amount > countDetails)
-                                    {
-                                        throw new Exception("Недостаточно деталей");
-                                    }
-                                    else
-                                    {
-                                        context.Details
-                                            .FirstOrDefault(detail => detail.Id == carDetail.DetailId).TotalAmount -= carDetail.Amount;
-
-                                        context.SaveChanges();
-                                        break;
-                                    }
+                                    throw new Exception("Недостаточно деталей");
                                 }
+                            }
 
-                                if (element.OrderStatus != OrderStatus.Зарезервирован) continue;
+                            foreach (var orderCar in orderCars)
+                            {
+                                var carDetails = context.CarDetails.Where(rec => rec.CarId == orderCar.CarId);
+
+                                foreach (var carDetail in carDetails)
                                 {
-                                    int countDetails = carDetail.Detail.TotalReserve;
+                                    var detail = context.Details.FirstOrDefault(rec => rec.Id == carDetail.DetailId);
 
-                                    if (carDetail.Amount > countDetails)
-                                    {
-                                        throw new Exception("Недостаточно деталей");
-                                    }
-                                    else
-                                    {
-                                        carDetail.Detail.TotalReserve -= carDetail.Amount;
-                                        context.SaveChanges();
-                                        break;
-                                    }
+                                    detail.TotalAmount -= carDetail.Amount;
+                                }
+                            }
+                        }
+
+                        if (element.OrderStatus == OrderStatus.Зарезервирован)
+                        {
+                            foreach (var orderCar in orderCars)
+                            {
+                                var carDetails = context.CarDetails.Where(rec => rec.CarId == orderCar.CarId);
+
+                                foreach (var carDetail in carDetails)
+                                {
+                                    var detail = context.Details.FirstOrDefault(rec => rec.Id == carDetail.DetailId);
+
+                                    detail.TotalReserve -= carDetail.Amount;
                                 }
                             }
                         }
@@ -303,13 +302,18 @@ namespace KorytoServiceImplementDataBase.Implementations
             }
         }
 
-        public void SaveDataBase()
+        public void SaveDataBaseClient()
         {
             SaveEntity(context.Orders.ToList());
-            SaveEntity(context.Cars.ToList());
             SaveEntity(context.Clients.ToList());
-            SaveEntity(context.Details.ToList());
             SaveEntity(context.OrderCars.ToList());
+           
+        }
+
+        public void SaveDataBaseAdmin()
+        {
+            SaveEntity(context.Cars.ToList());
+            SaveEntity(context.Details.ToList());
             SaveEntity(context.CarDetails.ToList());
             SaveEntity(context.DetailRequests.ToList());
             SaveEntity(context.Requests.ToList());
@@ -319,7 +323,7 @@ namespace KorytoServiceImplementDataBase.Implementations
         {
             var jsonFormatter = new DataContractJsonSerializer(entity.GetType());
 
-            using (var fs = new FileStream($"backup/{GetNameEntity(entity)}.json",
+            using (var fs = new FileStream($"D:\\backup/{GetNameEntity(entity)}.json",
                 FileMode.OpenOrCreate))
             {
                 jsonFormatter.WriteObject(fs, entity);

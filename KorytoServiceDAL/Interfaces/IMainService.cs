@@ -23,6 +23,8 @@ namespace KorytoServiceDAL.Interfaces
 
         void ReserveOrder(OrderBindingModel model);
 
-        void SaveDataBase();
+        void SaveDataBaseClient();
+
+        void SaveDataBaseAdmin();
     }
 }
