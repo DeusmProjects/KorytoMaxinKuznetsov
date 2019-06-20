@@ -565,6 +565,10 @@ namespace KorytoServiceImplementDataBase.Implementations
 
         public void SaveDetailsReport(List<LoadRequestReportViewModel> DetailsRequest, List<LoadOrderReportViewModel> DetailsOrder, string fileName, ReportBindingModel model)
         {
+            if (!File.Exists("TIMCYR.TTF"))
+            {
+                File.WriteAllBytes("TIMCYR.TTF", Properties.Resources.TIMCYR);
+            }
 
             Document doc = new Document(PageSize.A4.Rotate());
             BaseFont baseFont = BaseFont.CreateFont("TIMCYR.TTF", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);

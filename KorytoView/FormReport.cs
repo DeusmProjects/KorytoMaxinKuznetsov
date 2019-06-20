@@ -186,7 +186,7 @@ namespace KorytoView
                     try
                     {
                         report.SaveDetailsReport(DetailsOrder, DetailsRequest, saveFile.FileName, reportModel);
-                        MessageBox.Show("Отчёт успешно сохранен", "Информация", MessageBoxButtons.OK);
+
                     }
                     catch (Exception ex)
                     {
@@ -194,6 +194,18 @@ namespace KorytoView
                     }
 
                 }
+
+                string directoryPath = saveFile.FileName;
+
+                var files = new List<string>
+                        {
+                            directoryPath
+                        };
+
+                MailService.SendEmail("kuzikuzikuzikuzi33@gmail.com", "Оповещение по заявкам",
+                    $"Отчет от {reportModel.DateFrom} по {reportModel.DateTo}", files);
+
+                MessageBox.Show("Отчёт успешно сохранен и отправлен получателю", "Информация", MessageBoxButtons.OK);
             }
         }
     }

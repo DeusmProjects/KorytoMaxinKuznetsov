@@ -1,5 +1,6 @@
 ﻿using KorytoServiceDAL.Interfaces;
 using KorytoServiceDAL.ViewModel;
+using KorytoServiceImplementDataBase.Implementations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -101,12 +102,13 @@ namespace KorytoView
                         ValidateNames = true
                     })
                     {
+                        var data = request.GetDetailsRequest(id);
+
                         if (saveFile.ShowDialog() == DialogResult.OK)
                         {
                             try
                             {
-                                request.SaveRequestToExcel(request.GetDetailsRequest(id), saveFile.FileName);
-                                MessageBox.Show("Отчёт успешно сохранен и отправлен получателю", "Информация", MessageBoxButtons.OK);
+                                request.SaveRequestToExcel(request.GetDetailsRequest(id), saveFile.FileName);                              
                             }
                             catch (Exception ex)
                             {
@@ -114,6 +116,18 @@ namespace KorytoView
                             }
 
                         }
+
+                        string directoryPath = saveFile.FileName;
+
+                        var files = new List<string>
+                        {
+                            directoryPath
+                        };
+
+                        MailService.SendEmail("kuzikuzikuzikuzi33@gmail.com", "Оповещение по заявкам",
+                            $"Заявка №{id} от {data.DateCreate}", files);
+
+                        MessageBox.Show("Отчёт успешно сохранен и отправлен получателю", "Информация", MessageBoxButtons.OK);
                     }
                 }
             }
@@ -134,12 +148,14 @@ namespace KorytoView
                         ValidateNames = true
                     })
                     {
+
+                        var data = request.GetDetailsRequest(id);
+
                         if (saveFile.ShowDialog() == DialogResult.OK)
                         {
                             try
                             {
                                 request.SaveRequestToWord(request.GetDetailsRequest(id), saveFile.FileName);
-                                MessageBox.Show("Отчёт успешно сохранен и отправлен получателю", "Информация", MessageBoxButtons.OK);
                             }
                             catch (Exception ex)
                             {
@@ -147,6 +163,18 @@ namespace KorytoView
                             }
 
                         }
+
+                        string directoryPath = saveFile.FileName;
+
+                        var files = new List<string>
+                        {
+                            directoryPath
+                        };
+
+                        MailService.SendEmail("kuzikuzikuzikuzi33@gmail.com", "Оповещение по заявкам",
+                            $"Заявка №{id} от {data.DateCreate}", files);
+
+                        MessageBox.Show("Заявка успешно сохранена и отправлена поставшику", "Информация", MessageBoxButtons.OK);
                     }
                 }
             }
