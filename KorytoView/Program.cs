@@ -42,6 +42,8 @@ namespace KorytoView
 
             currentContainer.RegisterType<IRequestService, RequestServiceDB>(new HierarchicalLifetimeManager());
 
+            currentContainer.RegisterType<IStatisticService, StatisticServiceDB>(new HierarchicalLifetimeManager());
+
             return currentContainer;
         }
 
