@@ -5,15 +5,11 @@ using KorytoServiceDAL.ViewModel;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data.Entity.SqlServer;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Mail;
 using System.Runtime.Serialization.Json;
-using System.Text;
 
 namespace KorytoServiceImplementDataBase.Implementations
 {
@@ -201,17 +197,18 @@ namespace KorytoServiceImplementDataBase.Implementations
 
                         context.OrderCars.Add(orderCar);
 
-                        var carDetail = context.CarDetails.FirstOrDefault(rec => rec.CarId == orderCar.CarId);
+                        var carDetails = context.CarDetails.Where(rec => rec.CarId == orderCar.CarId);
 
-                        var detail = context.Details.FirstOrDefault(rec => rec.Id == carDetail.DetailId);
-
-                        var reserveDetails = carDetail.Amount;
-
-                        var check = detail.TotalAmount - reserveDetails;
-
-                        if (check >= 0)
+                        if (carDetails.All(rec =>
+                            rec.Amount <= context.Details.FirstOrDefault(r => r.Id == rec.DetailId).TotalAmount))
                         {
-                            detail.TotalReserve += reserveDetails;
+                            foreach (var carDetail in carDetails)
+                            {
+                                var detail = context.Details.FirstOrDefault(r => r.Id == carDetail.DetailId);
+
+                                detail.TotalAmount -= carDetail.Amount;
+                                detail.TotalReserve += carDetail.Amount;
+                            }
                         }
                         else
                         {
@@ -221,11 +218,6 @@ namespace KorytoServiceImplementDataBase.Implementations
                         context.SaveChanges();
                     }
                     transaction.Commit();
-
-                    var client = context.Clients.FirstOrDefault(x => x.Id == model.ClientId);
-
-                    MailService.SendEmail(client?.Mail, "Оповещение по заказам",
-                        $"Заказ №{element.Id} от {element.DateCreate.ToShortDateString()} зарезервирован успешно", null);
                 }
                 catch (Exception)
                 {

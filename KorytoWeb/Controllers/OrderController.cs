@@ -1,4 +1,5 @@
-﻿using KorytoServiceDAL.BindingModel;
+﻿using System;
+using KorytoServiceDAL.BindingModel;
 using KorytoServiceDAL.Interfaces;
 using KorytoServiceDAL.ViewModel;
 using System.Collections.Generic;
@@ -82,6 +83,11 @@ namespace KorytoWeb.Controllers
         public ActionResult ReservePost()
         {
             var order = (OrderViewModel)Session["Order"];
+            order.DateCreate = DateTime.Now.ToShortDateString();
+            order.Id = Globals.DbContext.Orders.Max(rec => rec.Id) + 1;
+            order.ClientId = Globals.AuthClient.Id;
+            order.ClientFIO = Globals.AuthClient.ClientFIO;
+
             var orderCars = new List<OrderCarBindingModel>();
             for (int i = 0; i < order.OrderCars.Count; ++i)
             {
@@ -100,6 +106,11 @@ namespace KorytoWeb.Controllers
                 TotalSum = orderCars.Sum(rec => rec.Amount * carService.GetElement(rec.CarId).Price),
                 OrderCars = orderCars
             });
+
+            order.TotalSum = orderCars.Sum(rec => rec.Amount * carService.GetElement(rec.CarId).Price);
+
+            Globals.ReportService.SaveClientReserveWord(order, "D:\\reserve.doc");
+
             Session.Remove("Order");
             return RedirectToAction("Index", "Orders");
         }

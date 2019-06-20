@@ -13,5 +13,9 @@ namespace KorytoServiceDAL.Interfaces
         List<ClientOrdersViewModel> GetClientOrders(ReportBindingModel model, int clientId);
 
         void SaveClientOrders(ReportBindingModel model, int clientId);
+
+        void SaveClientReserveWord(OrderViewModel model, string fileName);
+
+        void SaveClientReserveExel(OrderViewModel model, string fileName);
     }
 }

@@ -10,7 +10,10 @@ using System.Data.Entity.SqlServer;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Xml.Linq;
+using Microsoft.Office.Interop.Word;
+using Document = iTextSharp.text.Document;
+using Font = iTextSharp.text.Font;
+using Paragraph = iTextSharp.text.Paragraph;
 
 namespace KorytoServiceImplementDataBase.Implementations
 {
@@ -25,10 +28,183 @@ namespace KorytoServiceImplementDataBase.Implementations
             this.context = context;
         }
 
+        public void SaveClientReserveWord(OrderViewModel model, string fileName)
+        {
+            if (File.Exists(fileName))
+            {
+                File.Delete(fileName);
+            }
+
+            var winword = new Application();
+
+            try
+            {
+                object missing = System.Reflection.Missing.Value;
+
+                var document = winword.Documents.Add(ref missing, ref missing, ref missing, ref missing);
+
+                var paragraph = document.Paragraphs.Add(missing);
+                var range = paragraph.Range;
+
+                range.Text = "Зарезервированный заказ";
+
+                var font = range.Font;
+                font.Size = 16;
+                font.Name = "Times New Roman";
+                font.Bold = 1;
+
+                var paragraphFormat = range.ParagraphFormat;
+                paragraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                paragraphFormat.LineSpacingRule = WdLineSpacing.wdLineSpaceSingle;
+                paragraphFormat.SpaceAfter = 10;
+                paragraphFormat.SpaceBefore = 0;
+
+                range.InsertParagraphAfter();
+
+                var paragraphTable = document.Paragraphs.Add(Type.Missing);
+                var rangeTable = paragraphTable.Range;
+                var table = document.Tables.Add(rangeTable, 2, 3, ref
+                    missing, ref missing);
+                font = table.Range.Font;
+                font.Size = 14;
+                font.Name = "Times New Roman";
+                var paragraphTableFormat = table.Range.ParagraphFormat;
+                paragraphTableFormat.LineSpacingRule = WdLineSpacing.wdLineSpaceSingle;
+                paragraphTableFormat.SpaceAfter = 0;
+                paragraphTableFormat.SpaceBefore = 0;
+
+                table.Cell(1, 1).Range.Text = "ФИО клиента";
+                table.Cell(1, 2).Range.Text = "Сумма заказа";
+                table.Cell(1, 3).Range.Text = "Дата резервации";
+
+                table.Cell(2, 1).Range.Text = model.ClientFIO;
+                table.Cell(2, 2).Range.Text = model.TotalSum.ToString();
+                table.Cell(2, 3).Range.Text = model.DateCreate;
+
+                table.Borders.InsideLineStyle = WdLineStyle.wdLineStyleInset;
+                table.Borders.OutsideLineStyle = WdLineStyle.wdLineStyleSingle;
+
+                range.InsertParagraphAfter();
+
+                range = paragraph.Range;
+                range.Text = "Машины в заказе";
+
+                font = range.Font;
+                font.Size = 14;
+                font.Name = "Times New Roman";
+                font.Bold = 1;
+
+                paragraphFormat = range.ParagraphFormat;
+                paragraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                paragraphFormat.LineSpacingRule = WdLineSpacing.wdLineSpaceSingle;
+                paragraphFormat.SpaceAfter = 10;
+                paragraphFormat.SpaceBefore = 0;
+
+                range.InsertParagraphAfter();
+
+                paragraphTable = document.Paragraphs.Add(Type.Missing);
+                rangeTable = paragraphTable.Range;
+
+                table = document.Tables.Add(rangeTable, 20, 4, ref
+                    missing, ref missing);
+                font = table.Range.Font;
+                font.Size = 14;
+                font.Name = "Times New Roman";
+                font.Bold = 0;
+                paragraphTableFormat = table.Range.ParagraphFormat;
+                paragraphTableFormat.LineSpacingRule = WdLineSpacing.wdLineSpaceSingle;
+                paragraphTableFormat.SpaceAfter = 0;
+                paragraphTableFormat.SpaceBefore = 0;
+
+                table.Cell(1, 1).Range.Text = "Название";
+                table.Cell(1, 2).Range.Text = "Количество";
+                table.Cell(1, 3).Range.Text = "Комплектация";
+                table.Cell(1, 4).Range.Text = "Количество";
+
+                int curRow = 2;
+                int indexCar = 0;
+
+                while (indexCar < model.OrderCars.Count)
+                {
+                    table.Cell(curRow, 1).Range.Text = model.OrderCars[indexCar].CarName;
+                    table.Cell(curRow, 2).Range.Text = model.OrderCars[indexCar].Amount.ToString();
+
+                    int carId = model.OrderCars[indexCar].CarId;
+
+                    var carDetails = context.CarDetails
+                        .Where(rec => rec.CarId == carId)
+                        .Select(rec => new CarDetailViewModel
+                        {
+                            DetailName = context.Details.FirstOrDefault(det => det.Id == rec.DetailId).DetailName,
+                            Amount = rec.Amount
+                        }).ToArray();
+
+                    int indexDet = 0;
+
+                    while (indexDet < carDetails.Length)
+                    {
+                        table.Cell(curRow, 3).Range.Text = carDetails[indexDet].DetailName;
+                        table.Cell(curRow, 4).Range.Text = carDetails[indexDet].Amount.ToString();
+                        indexDet++;
+                        curRow++;
+                    }
+
+                    indexCar++;
+                    curRow++;
+                }
+
+                table.Borders.InsideLineStyle = WdLineStyle.wdLineStyleInset;
+                table.Borders.OutsideLineStyle = WdLineStyle.wdLineStyleSingle;
+
+                paragraph = document.Paragraphs.Add(missing);
+                range = paragraph.Range;
+                range.Text = "Дата: " + DateTime.Now.ToLongDateString();
+                font = range.Font;
+                font.Size = 12;
+                font.Name = "Times New Roman";
+                paragraphFormat = range.ParagraphFormat;
+                paragraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphRight;
+                paragraphFormat.LineSpacingRule = WdLineSpacing.wdLineSpaceSingle;
+                paragraphFormat.SpaceAfter = 10;
+                paragraphFormat.SpaceBefore = 10;
+
+                range.InsertParagraphAfter();
+                //сохраняем
+                object fileFormat = WdSaveFormat.wdFormatXMLDocument;
+                document.SaveAs(fileName, ref fileFormat, ref missing,
+                    ref missing, ref missing, ref missing, ref missing,
+                    ref missing, ref missing, ref missing, ref missing,
+                    ref missing, ref missing, ref missing, ref missing,
+                    ref missing);
+                document.Close(ref missing, ref missing, ref missing);
+
+                var client = context.Clients.FirstOrDefault(rec => rec.Id == model.ClientId);
+
+                MailService.SendEmail(client?.Mail, "Оповещение по заказам",
+                    $"Заказ №{model.Id} от {model.DateCreate} зарезервирован успешно", fileName);
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                winword.Quit();
+            }
+        }
+
+        public void SaveClientReserveExel(OrderViewModel model, string fileName)
+        {
+
+        }
+
         public List<ClientOrdersViewModel> GetClientOrders(ReportBindingModel model, int clientId)
         {
             return context.Orders
-                .Where(rec => rec.DateCreate >= model.DateFrom && rec.DateCreate <= model.DateTo && rec.ClientId == clientId)
+                .Where(rec => rec.DateCreate >= model.DateFrom &&
+                              rec.DateCreate <= model.DateTo && 
+                              rec.ClientId == clientId)
                 .Select(rec => new ClientOrdersViewModel
                 {
                     ClientName = rec.Client.ClientFIO,
@@ -127,6 +303,7 @@ namespace KorytoServiceImplementDataBase.Implementations
             }
 
             document.Close();
+            fs.Close();
         }
 
         private void DrawLine(PdfContentByte cb, Document doc, PdfWriter writer)

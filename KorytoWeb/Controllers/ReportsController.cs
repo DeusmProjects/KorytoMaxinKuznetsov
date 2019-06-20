@@ -1,9 +1,8 @@
 ﻿using KorytoServiceDAL.BindingModel;
 using KorytoServiceDAL.Interfaces;
-using System;
-using System.Linq;
-using System.Web.Mvc;
 using KorytoServiceImplementDataBase.Implementations;
+using System;
+using System.Web.Mvc;
 
 namespace KorytoWeb.Controllers
 {
@@ -24,13 +23,13 @@ namespace KorytoWeb.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateReport([Bind(Include = "DateFrom, DateTo")] ReportBindingModel report)
+        public ActionResult CreateReport(DateTime dateFrom, DateTime dateTo)
         {
 
             Globals.ModelReport = new ClientOrders
             {
-                DateFrom = report.DateFrom,
-                DateTo = report.DateTo,
+                DateFrom = dateFrom,
+                DateTo = dateTo,
                 Orders = Service.GetClientOrders(Globals.AuthClient.Id)
             };
 
@@ -44,8 +43,8 @@ namespace KorytoWeb.Controllers
 
             reportService.SaveClientOrders(new ReportBindingModel
             {
-                DateTo = DateTime.Now,
-                DateFrom = new DateTime(2019, 6, 10),
+                DateFrom = Globals.ModelReport.DateFrom,
+                DateTo = Globals.ModelReport.DateTo,
                 FileName = fileName
             }, 
                 Globals.AuthClient.Id);
