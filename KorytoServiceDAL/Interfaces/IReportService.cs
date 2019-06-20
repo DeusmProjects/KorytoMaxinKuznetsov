@@ -6,9 +6,11 @@ namespace KorytoServiceDAL.Interfaces
 {
     public interface IReportService
     {
-        List<RequestLoadViewModel> GetDetailReguest(ReportBindingModel model);
+        List<LoadRequestReportViewModel> GetDetailsRequest(ReportBindingModel model);
 
-        void SaveLoadRequest(List<RequestLoadViewModel> list, string fileName);
+        List<LoadOrderReportViewModel> GetDetailsOrder(ReportBindingModel model);
+
+        void SaveDetailsReport(List<LoadRequestReportViewModel> DetailsRequest, List<LoadOrderReportViewModel> DetailsOrder, string fileName, ReportBindingModel model);
 
         List<ClientOrdersViewModel> GetClientOrders(ReportBindingModel model, int clientId);
 

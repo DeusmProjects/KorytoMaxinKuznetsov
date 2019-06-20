@@ -13,5 +13,11 @@ namespace KorytoServiceDAL.Interfaces
         void AddElement(RequestBindingModel model);
       
         void DeleteElement(int id);
+
+        LoadRequestReportViewModel GetDetailsRequest(int id);
+
+        void SaveRequestToWord(LoadRequestReportViewModel request, string fileName);
+
+        void SaveRequestToExcel(LoadRequestReportViewModel request, string fileName);
     }
 }

@@ -2,8 +2,11 @@
 using KorytoServiceDAL.BindingModel;
 using KorytoServiceDAL.Interfaces;
 using KorytoServiceDAL.ViewModel;
+using Microsoft.Office.Interop.Excel;
+using Microsoft.Office.Interop.Word;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace KorytoServiceImplementDataBase.Implementations
@@ -145,6 +148,164 @@ namespace KorytoServiceImplementDataBase.Implementations
                 .ToList();
 
             return result;
-        }      
+        }
+
+        public LoadRequestReportViewModel GetDetailsRequest(int id)
+        {
+            var request = context.Requests.FirstOrDefault(
+                record => record.Id == id);
+
+            if (request != null)
+            {
+                LoadRequestReportViewModel report = new LoadRequestReportViewModel
+                {
+
+                    DateCreate = request.DateCreate.ToString(),
+
+                    Details = context.DetailRequests
+                        .Where(details => details.RequestId == request.Id)
+                        .ToList()
+                        .Select(selectDetail => new Tuple<string, int>(
+                            context.Details
+                            .FirstOrDefault(detail => detail.Id == selectDetail.DetailId).DetailName, selectDetail.Amount))
+                        .ToList()
+                };
+
+                if (report != null)
+                {
+                    return report;
+                }
+                else
+                {
+                    throw new Exception("Error");
+                }
+            }
+            return null;
+        }
+
+        public void SaveRequestToWord(LoadRequestReportViewModel request, string fileName)
+        {
+            var word = new Microsoft.Office.Interop.Word.Application();
+
+            if (File.Exists(fileName))
+            {
+                File.Delete(fileName);
+            }            object missing = System.Reflection.Missing.Value;
+
+            Document document = word.Documents.Add(ref missing, ref missing, ref missing, ref missing);
+
+            var paragraph = document.Paragraphs.Add(missing);
+            var range = paragraph.Range;
+
+            range.Text = "Заявка от : " + request.DateCreate;
+            var font = range.Font;
+            font.Size = 12;
+            font.Name = "Times New Roman";
+            font.Bold = 1;
+
+            var paragraphFormat = range.ParagraphFormat;
+            paragraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            paragraphFormat.LineSpacingRule = WdLineSpacing.wdLineSpaceSingle;
+            paragraphFormat.SpaceAfter = 10;
+            paragraphFormat.SpaceBefore = 0;
+
+            range.InsertParagraphAfter();
+
+            var paragraphTable = document.Paragraphs.Add(Type.Missing);
+            var rangeTable = paragraphTable.Range;
+            var table = document.Tables.Add(rangeTable, request.Details.Count(), 2, ref missing, ref missing);
+
+            font = table.Range.Font;
+            font.Size = 10;
+            font.Name = "Times New Roman";
+
+            var paragraphTableFormat = table.Range.ParagraphFormat;
+            paragraphTableFormat.LineSpacingRule = WdLineSpacing.wdLineSpaceSingle;
+            paragraphTableFormat.SpaceAfter = 0;
+            paragraphTableFormat.SpaceBefore = 0;
+
+            for (int i = 0; i < request.Details.Count(); ++i)
+            {
+                table.Cell(i + 1, 1).Range.Text = request.Details.ElementAt(i).Item1;
+                table.Cell(i + 1, 2).Range.Text = request.Details.ElementAt(i).Item2.ToString();
+            }
+
+            table.Borders.InsideLineStyle = WdLineStyle.wdLineStyleInset;
+            table.Borders.OutsideLineStyle = WdLineStyle.wdLineStyleSingle;
+            paragraph = document.Paragraphs.Add(missing);
+            range = paragraph.Range;
+
+            range.InsertParagraphAfter();
+
+            object fileFormat = WdSaveFormat.wdFormatXMLDocument;
+
+            document.SaveAs(fileName, ref fileFormat, ref missing,
+            ref missing, ref missing, ref missing, ref missing,
+            ref missing, ref missing, ref missing, ref missing,
+            ref missing, ref missing, ref missing, ref missing,
+            ref missing);
+
+            document.Close(ref missing, ref missing, ref missing);
+
+            word.Quit();
+        }
+
+        public void SaveRequestToExcel(LoadRequestReportViewModel request, string fileName)
+        {
+            var excel = new Microsoft.Office.Interop.Excel.Application();
+            if (File.Exists(fileName))
+            {
+                excel.Workbooks.Open(fileName, Type.Missing, Type.Missing,
+               Type.Missing,
+                Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+               Type.Missing,
+                Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+               Type.Missing,
+                Type.Missing);
+            }
+            else
+            {
+                excel.SheetsInNewWorkbook = 1;
+                excel.Workbooks.Add(Type.Missing);
+                excel.Workbooks[1].SaveAs(fileName, XlFileFormat.xlExcel8,
+                Type.Missing,
+                 Type.Missing, false, false, XlSaveAsAccessMode.xlNoChange,
+                Type.Missing,
+                 Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+            }
+
+            Sheets excelsheets = excel.Workbooks[1].Worksheets;
+            var excelworksheet = (Worksheet)excelsheets.get_Item(1);
+            excelworksheet.Cells.Clear();
+
+            Microsoft.Office.Interop.Excel.Range excelcells = excelworksheet.get_Range("B2", "C2");
+            excelcells.Merge(Type.Missing);
+            excelcells.Font.Bold = true;
+            excelcells.Value2 = "Заявка от : ";
+            excelcells.Font.Name = "Times New Roman";
+            excelcells.Font.Size = 10;
+            excelcells.RowHeight = 30;
+
+            excelcells = excelworksheet.get_Range("B3", "C3");
+            excelcells.Merge(Type.Missing);
+            excelcells.Font.Bold = true;
+            excelcells.Value2 = request.DateCreate;
+            excelcells.Font.Name = "Times New Roman";
+            excelcells.Font.Size = 10;
+            excelcells.RowHeight = 30;            int row = 4;            foreach (var element in request.Details)
+            {
+                excelworksheet.Cells[row, 2] = element.Item1;
+
+                excelworksheet.Cells[row, 3] = element.Item2.ToString();
+
+                row++;
+            }
+
+            var range = excelworksheet.get_Range("B2", "C" + row);
+            (range).Cells.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+
+            excel.Workbooks[1].Save();
+            excel.Quit();
+        }
     }
 }

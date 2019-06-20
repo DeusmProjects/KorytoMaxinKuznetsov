@@ -17,7 +17,7 @@ namespace KorytoWeb
         public static IReportService ReportService { get; } = new ReportServiceDB(DbContext);
         public static IRequestService RequestService { get; } = new RequestServiceDB(DbContext);
         public static IStatisticService StatisticService { get; } = new StatisticServiceDB(DbContext);
-        public static ClientViewModel AuthClient { get; set; } = ClientService.GetElement(1);
+        public static ClientViewModel AuthClient { get; set; }
         public static ClientOrders ModelReport { get; set; }
     }
 }

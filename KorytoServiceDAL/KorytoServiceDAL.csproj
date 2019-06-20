@@ -66,6 +66,8 @@
     <Compile Include="ViewModel\ClientViewModel.cs" />
     <Compile Include="ViewModel\DetailRequestViewModel.cs" />
     <Compile Include="ViewModel\DetailViewModel.cs" />
+    <Compile Include="ViewModel\LoadOrderReportViewModel.cs" />
+    <Compile Include="ViewModel\LoadRequestReportViewModel.cs" />
     <Compile Include="ViewModel\OrderCarViewModel.cs" />
     <Compile Include="ViewModel\OrderViewModel.cs" />
     <Compile Include="ViewModel\RequestLoadViewModel.cs" />

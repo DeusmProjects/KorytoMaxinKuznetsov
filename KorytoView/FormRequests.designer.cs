@@ -32,6 +32,8 @@
             this.buttonDeleteElement = new System.Windows.Forms.Button();
             this.buttonAddElement = new System.Windows.Forms.Button();
             this.dataGridView = new System.Windows.Forms.DataGridView();
+            this.buttonMailWord = new System.Windows.Forms.Button();
+            this.buttonMailExcel = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -75,11 +77,33 @@
             this.dataGridView.Size = new System.Drawing.Size(554, 426);
             this.dataGridView.TabIndex = 25;
             // 
+            // buttonMailWord
+            // 
+            this.buttonMailWord.Location = new System.Drawing.Point(593, 394);
+            this.buttonMailWord.Name = "buttonMailWord";
+            this.buttonMailWord.Size = new System.Drawing.Size(191, 44);
+            this.buttonMailWord.TabIndex = 33;
+            this.buttonMailWord.Text = "Отправить заявку Word ";
+            this.buttonMailWord.UseVisualStyleBackColor = true;
+            this.buttonMailWord.Click += new System.EventHandler(this.buttonMailWord_Click);
+            // 
+            // buttonMailExcel
+            // 
+            this.buttonMailExcel.Location = new System.Drawing.Point(593, 344);
+            this.buttonMailExcel.Name = "buttonMailExcel";
+            this.buttonMailExcel.Size = new System.Drawing.Size(191, 44);
+            this.buttonMailExcel.TabIndex = 32;
+            this.buttonMailExcel.Text = "Отправить заявку Excel ";
+            this.buttonMailExcel.UseVisualStyleBackColor = true;
+            this.buttonMailExcel.Click += new System.EventHandler(this.buttonMailExcel_Click);
+            // 
             // FormRequests
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.buttonMailWord);
+            this.Controls.Add(this.buttonMailExcel);
             this.Controls.Add(this.buttonUpdate);
             this.Controls.Add(this.buttonDeleteElement);
             this.Controls.Add(this.buttonAddElement);
@@ -98,5 +122,7 @@
         private System.Windows.Forms.Button buttonDeleteElement;
         private System.Windows.Forms.Button buttonAddElement;
         private System.Windows.Forms.DataGridView dataGridView;
+        private System.Windows.Forms.Button buttonMailWord;
+        private System.Windows.Forms.Button buttonMailExcel;
     }
 }

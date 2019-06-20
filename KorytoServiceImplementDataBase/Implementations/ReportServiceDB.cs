@@ -356,48 +356,7 @@ namespace KorytoServiceImplementDataBase.Implementations
                 .ToList();
         }
 
-        public List<RequestLoadViewModel> GetDetailReguest(ReportBindingModel model)
-        {
-            var requests = context.Requests
-                .Where(rec => rec.DateCreate >= model.DateFrom && rec.DateCreate <= model.DateTo).ToList();
-
-            for (int request = 0; request < requests.Count(); request++)
-            {
-                requests[request].DetailRequests = new List<DetailRequest>();
-            }
-
-            var detailsRequest = context.DetailRequests.ToList();
-
-            var details = context.Details.ToList();
-
-            for (int i = 0; i < detailsRequest.Count(); i++)
-            {
-                int detailId = detailsRequest[i].DetailId;
-
-                for (int j = 0; j < details.Count(); j++)
-                {
-                    if (details[j].Id == detailId)
-                    {
-                        detailsRequest[i].Detail = details[j];
-                        break;
-                    }
-                }
-            }
-
-            var result = new List<RequestLoadViewModel>();
-
-            for (int i = 0; i < requests.Count(); i++)
-            {
-                result.Add(new RequestLoadViewModel
-                {
-                    DateRequst = requests[i].DateCreate.ToString(),
-                    Details = requests[i].DetailRequests.Select(r => new Tuple<string, int>(r.Detail.DetailName, r.Amount))
-                });
-            }
-
-            return result;
-        }
-
+        
         public void SaveClientOrders(ReportBindingModel model, int clientId)
         {
 
@@ -603,145 +562,272 @@ namespace KorytoServiceImplementDataBase.Implementations
             });
         }
 
-        public void SaveLoadRequest(List<RequestLoadViewModel> list, string fileName)
-        {
 
-            Document doc = new Document(PageSize.A4.Rotate());
-
-            using (var writer = PdfWriter.GetInstance(doc, new FileStream(fileName, FileMode.Create)))
-            {
-                doc.Open();
-                PdfPTable table = CreateTable();
-                table = FillTabel(list, table);
-                doc.Add(table);
-                doc.Close();
-            }
-        }
-
-        private PdfPTable FillTabel(List<RequestLoadViewModel> list, PdfPTable table)
-        {
-            PdfPTable Table = table;
-
-            int rows = CountRows(list);
-
-            PdfPCell cell = new PdfPCell();
-
-            BaseFont baseFont = BaseFont.CreateFont("TIMCYR.TTF", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
-            var fontForCells = new Font(baseFont, 10, Font.NORMAL);
-
-            for (int i = 0; i < list.Count; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    if (j == 0)
-                    {
-                        cell = new PdfPCell(new PdfPCell(new Phrase("Request (date) : "))
-                        {
-                            HorizontalAlignment = Element.ALIGN_CENTER
-                        });
-                    }
-                    else
-                    {
-                        cell = new PdfPCell(new PdfPCell(new Phrase(""))
-                        {
-                            HorizontalAlignment = Element.ALIGN_CENTER
-                        });
-                    }
-                    Table.AddCell(cell);
-                }
-
-                for (int j = 0; j < list[i].Details.Count(); j++)
-                {
-                    RequestLoadViewModel reportElement = list[i];
-
-                    for (int k = 0; k < 3; k++)
-                    {
-                        if (j == 0 && k == 0)
-                        {
-                            string date = reportElement.DateRequst;
-                            cell = new PdfPCell(new PdfPCell(new Phrase(date))
-                            {
-                                HorizontalAlignment = Element.ALIGN_CENTER
-                            });
-
-                        }
-                        if (j != 0 && k == 0)
-                        {
-                            cell = new PdfPCell(new PdfPCell(new Phrase(""))
-                            {
-                                HorizontalAlignment = Element.ALIGN_CENTER
-                            });
-
-                        }
-                        if (k == 1)
-                        {
-                            string name = reportElement.Details.ElementAt(j).Item1;
-                            cell = new PdfPCell(new PdfPCell(new Phrase(name))
-                            {
-                                HorizontalAlignment = Element.ALIGN_CENTER
-                            });
-
-                        }
-                        if (k == 2)
-                        {
-                            string amount = reportElement.Details.ElementAt(j).Item2.ToString();
-                            cell = new PdfPCell(new PdfPCell(new Phrase(amount))
-                            {
-                                HorizontalAlignment = Element.ALIGN_CENTER
-                            });
-
-                        }
-                        Table.AddCell(cell);
-                    }
-                }
-            }
-
-            return Table;
-        }
-
-        private int CountRows(List<RequestLoadViewModel> list)
-        {
-            int rows = 0;
-            for (int i = 0; i < list.Count; i++)
-            {
-                rows += 2;
-                for (int j = 0; j < list[i].Details.Count(); j++)
-                {
-                    rows++;
-                }
-            }
-            return rows;
-        }
-
-        private PdfPTable CreateTable()
+        public void SaveDetailsReport(List<LoadRequestReportViewModel> DetailsRequest, List<LoadOrderReportViewModel> DetailsOrder, string fileName, ReportBindingModel model)
         {
             if (!File.Exists("TIMCYR.TTF"))
             {
                 File.WriteAllBytes("TIMCYR.TTF", Properties.Resources.TIMCYR);
             }
 
+            Document doc = new Document(PageSize.A4.Rotate());
             BaseFont baseFont = BaseFont.CreateFont("TIMCYR.TTF", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
-            var fontForCellBold = new Font(baseFont, 10, Font.BOLD);
 
+            using (var writer = PdfWriter.GetInstance(doc, new FileStream(fileName, FileMode.Create)))
+            {
+                doc.Open();
+                var title = new Phrase("Ревизия", new Font(baseFont, 16, Font.BOLD));
+                Paragraph prTitle = new Paragraph(title)
+                {
+                    Alignment = Element.ALIGN_CENTER,
+                    SpacingAfter = 5
+                };
+                doc.Add(prTitle);
+
+                var t1 = new Phrase("От " + model.DateFrom.ToString() + " по " + model.DateTo.ToString(), new Font(baseFont, 16, Font.BOLD));
+                Paragraph prT1 = new Paragraph(t1)
+                {
+                    Alignment = Element.ALIGN_CENTER,
+                    SpacingAfter = 50
+                };
+                doc.Add(prT1);
+
+
+                var phraseReqTitle = new Phrase("Пополнение деталей по заявкам :", new Font(baseFont, 16, Font.BOLD));
+                Paragraph paragraphReq = new Paragraph(phraseReqTitle)
+                {
+                    Alignment = Element.ALIGN_LEFT,
+                    SpacingAfter = 50
+                };
+                doc.Add(paragraphReq);
+
+                foreach (var element in DetailsRequest)
+                {
+                    var phrase = new Phrase("Заявка : " + element.DateCreate, new Font(baseFont, 12, Font.BOLD));
+                    Paragraph paragraph = new Paragraph(phrase)
+                    {
+                        Alignment = Element.ALIGN_LEFT,
+                        SpacingAfter = 10
+                    };
+                    doc.Add(paragraph);
+                    FillTable(element.Details, doc, baseFont, CreateHeadAndTable(doc, baseFont));
+                }
+
+                var phraseOrdTitle = new Phrase("Расходы деталей по заказаным автомобилям :", new Font(baseFont, 16, Font.BOLD));
+                Paragraph paragraphOrd = new Paragraph(phraseOrdTitle)
+                {
+                    Alignment = Element.ALIGN_LEFT,
+                    SpacingAfter = 50,
+                    SpacingBefore = 50
+                };
+                doc.Add(paragraphOrd);
+
+                foreach (var element in DetailsOrder)
+                {
+                    var p0 = new Phrase("Заказ номер №" + element.OrderId, new Font(baseFont, 12, Font.BOLD));
+                    Paragraph pr0 = new Paragraph(p0)
+                    {
+                        Alignment = Element.ALIGN_LEFT,
+                        SpacingAfter = 5
+
+                    };
+                    doc.Add(pr0);
+
+                    var p1 = new Phrase("Заказ от : " + element.DateCreate, new Font(baseFont, 12, Font.BOLD));
+                    Paragraph pr1 = new Paragraph(p1)
+                    {
+                        Alignment = Element.ALIGN_LEFT,
+                        SpacingAfter = 5
+
+                    };
+                    doc.Add(pr1);
+
+                    var p2 = new Phrase("Авто : " + element.CarName, new Font(baseFont, 12, Font.BOLD));
+                    Paragraph pr2 = new Paragraph(p2)
+                    {
+                        Alignment = Element.ALIGN_LEFT,
+                        SpacingAfter = 5
+                    };
+                    doc.Add(pr2);
+
+                    var p3 = new Phrase("Количество авто : " + element.CarAmount, new Font(baseFont, 12, Font.BOLD));
+                    Paragraph pr3 = new Paragraph(p3)
+                    {
+                        Alignment = Element.ALIGN_LEFT,
+                        SpacingAfter = 5
+                    };
+                    doc.Add(pr3);
+
+                    FillTable(element.Details, doc, baseFont, CreateHeadAndTable(doc, baseFont), element.CarAmount);
+                }
+
+                doc.Close();
+            }
+        }
+
+        private PdfPTable CreateHeadAndTable(Document doc, BaseFont baseFont)
+        {
             PdfPTable table = new PdfPTable(3);
-            table.AddCell(new PdfPCell(new Phrase("Отчет", fontForCellBold))
+
+            table.AddCell(new PdfPCell(new Phrase("Деталь", new Font(baseFont, 12, Font.NORMAL)))
             {
                 HorizontalAlignment = Element.ALIGN_CENTER
             });
 
-            table.AddCell(new PdfPCell(new Phrase("Деталь", fontForCellBold))
+            table.AddCell(new PdfPCell(new Phrase("Количество", new Font(baseFont, 12, Font.NORMAL)))
             {
                 HorizontalAlignment = Element.ALIGN_CENTER
             });
 
-            table.AddCell(new PdfPCell(new Phrase("Количество", fontForCellBold))
+            table.AddCell(new PdfPCell(new Phrase("Итог", new Font(baseFont, 12, Font.NORMAL)))
             {
                 HorizontalAlignment = Element.ALIGN_CENTER
             });
+
+            Paragraph p = new Paragraph();
+            table.HorizontalAlignment = Element.ALIGN_LEFT;
+            table.SpacingBefore = 5;
+            table.SpacingAfter = 25;
+            p.Add(table);
 
             return table;
         }
 
+        private PdfPTable FillTable(IEnumerable<Tuple<string, int>> Details, Document doc, BaseFont baseFont, PdfPTable table)
+        {
+            PdfPTable newtable = table;
+
+            foreach (var element in Details)
+            {
+                newtable.AddCell(new PdfPCell(new Phrase(element.Item1, new Font(baseFont, 12, Font.NORMAL)))
+                {
+                    HorizontalAlignment = Element.ALIGN_CENTER
+                });
+
+                newtable.AddCell(new PdfPCell(new Phrase(element.Item2.ToString(), new Font(baseFont, 12, Font.NORMAL)))
+                {
+                    HorizontalAlignment = Element.ALIGN_CENTER
+                });
+                newtable.AddCell(new PdfPCell(new Phrase(element.Item2.ToString(), new Font(baseFont, 12, Font.NORMAL)))
+                {
+                    HorizontalAlignment = Element.ALIGN_CENTER
+                });
+            }
+
+            doc.Add(newtable);
+            return newtable;
+        }
+
+        private PdfPTable FillTable(List<CarDetailViewModel> DetailsOrder, Document doc, BaseFont baseFont, PdfPTable table, int carAmount)
+        {
+
+            PdfPTable newtable = table;
+
+            foreach (var element in DetailsOrder)
+            {
+                newtable.AddCell(new PdfPCell(new Phrase(element.DetailName, new Font(baseFont, 12, Font.NORMAL)))
+                {
+                    HorizontalAlignment = Element.ALIGN_CENTER
+                });
+
+                newtable.AddCell(new PdfPCell(new Phrase(element.Amount.ToString(), new Font(baseFont, 12, Font.NORMAL)))
+                {
+                    HorizontalAlignment = Element.ALIGN_CENTER
+                });
+
+                int res = element.Amount * carAmount;
+                newtable.AddCell(new PdfPCell(new Phrase(res.ToString(), new Font(baseFont, 12, Font.NORMAL)))
+                {
+                    HorizontalAlignment = Element.ALIGN_CENTER
+                });
+            }
+
+            doc.Add(newtable);
+            return table;
+        }
+
+        public List<LoadRequestReportViewModel> GetDetailsRequest(ReportBindingModel model)
+        {
+            List<LoadRequestReportViewModel> DetailsRequest = context.Requests
+                .Where(requests => requests.DateCreate >= model.DateFrom && requests.DateCreate <= model.DateTo)
+                .ToList()
+                .Select(selectRequest => new LoadRequestReportViewModel
+                {
+                    DateCreate = selectRequest.DateCreate.ToString(),
+                    Details = context.DetailRequests
+                        .Where(details => details.RequestId == selectRequest.Id)
+                        .ToList()
+                        .Select(selectDetail => new Tuple<string, int>(
+                            context.Details
+                            .FirstOrDefault(detail => detail.Id == selectDetail.DetailId).DetailName, selectDetail.Amount))
+                        .ToList()
+                })
+            .ToList();
+
+            return DetailsRequest;
+        }
+
+        public List<LoadOrderReportViewModel> GetDetailsOrder(ReportBindingModel model)
+        {
+            List<LoadOrderReportViewModel> cars = context.Cars
+                .Select(rec => new LoadOrderReportViewModel
+                {
+                    CarName = rec.CarName,
+                    CarId = rec.Id,
+                    Details = context.CarDetails.Where(r => r.CarId == rec.Id).ToList().Select(rs => new CarDetailViewModel
+                    {
+                        CarId = rs.CarId,
+                        Amount = rs.Amount,
+                        DetailId = rs.DetailId,
+                        DetailName = context.Details.FirstOrDefault(d => d.Id == rs.DetailId).DetailName
+
+                    }).ToList()
+                })
+           .ToList();
+
+            List<LoadOrderReportViewModel> orders = context.Orders
+                .Where(rec => rec.DateImplement >= model.DateFrom && rec.DateImplement <= model.DateTo)
+                .Select(rec => new LoadOrderReportViewModel
+                {
+                    DateCreate = rec.DateImplement.ToString(),
+                    OrderId = rec.Id
+                })
+                .ToList();
+
+            List<OrderCar> orderCars = context.OrderCars.ToList();
+
+            List<LoadOrderReportViewModel> Details = new List<LoadOrderReportViewModel>();
+
+            foreach (var element in orderCars)
+            {
+                LoadOrderReportViewModel save = new LoadOrderReportViewModel();
+
+                foreach (var order in orders)
+                {
+                    if (element.OrderId == order.OrderId)
+                    {
+                        save.DateCreate = order.DateCreate;
+                        save.OrderId = order.OrderId;
+                        break;
+                    }
+                }
+
+                foreach (var car in cars)
+                {
+                    if (element.CarId == car.CarId && save.OrderId == element.OrderId)
+                    {
+                        save.CarName = car.CarName;
+                        save.CarAmount = element.Amount;
+                        save.Details = car.Details;
+                        break;
+                    }
+                }
+                Details.Add(save);
+            }
+
+            return Details;
+        }
     }
 }
+
 
