@@ -15,5 +15,11 @@
         <label>Средний чек заказа: </label>
         <span>@ViewBag.Service.GetAverageCheck()</span>
     </div>
+
+    <div>
+        <img alt="alternateText" src="@Url.Action("CreateChart")" />
+    </div>
+
+    @Html.ActionLink("Сохранить отчет по статистике", "SaveStatistic")
 </div>
 

@@ -15,6 +15,7 @@ using Document = iTextSharp.text.Document;
 using Font = iTextSharp.text.Font;
 using Paragraph = iTextSharp.text.Paragraph;
 using Microsoft.Office.Interop.Excel;
+using Global = Microsoft.Office.Interop.Excel.Global;
 
 namespace KorytoServiceImplementDataBase.Implementations
 {
@@ -826,6 +827,127 @@ namespace KorytoServiceImplementDataBase.Implementations
             }
 
             return Details;
+        }
+
+        private StatisticViewModel GetStatistic(int clientId)
+        {
+            var statisticService = new StatisticServiceDB(context);
+
+            return new StatisticViewModel
+            {
+                AverageCheck = statisticService.GetAverageCheck(),
+                AverageCheckClient = statisticService.GetAverageCustomerCheck(clientId),
+                CountCarsClient = statisticService.GetClientCarsCount(clientId),
+                MostPopularCar = statisticService.GetMostPopularCar(),
+                MostPopularCarClient = statisticService.GetPopularCarClient(clientId)
+            };
+        }
+
+        public void PrintStatistic(int clientId, string fileName)
+        {
+            var model = GetStatistic(clientId);
+
+            if (!File.Exists("TIMCYR.TTF"))
+            {
+                File.WriteAllBytes("TIMCYR.TTF", Properties.Resources.TIMCYR);
+            }
+
+            FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write);
+
+            var document = new Document();
+
+            PdfWriter writer = PdfWriter.GetInstance(document, fs);
+
+            baseFont = BaseFont.CreateFont("TIMCYR.TTF", BaseFont.IDENTITY_H,
+                BaseFont.NOT_EMBEDDED);
+
+            document.Open();
+
+            PrintHeader("Общая статистика", document);
+
+            var table = new PdfPTable(2);
+            var cell = new PdfPCell
+            {
+                Colspan = 2,
+                HorizontalAlignment = Element.ALIGN_CENTER
+            };
+            table.AddCell(cell);
+            table.SetTotalWidth(new float[] { 160, 140 });
+
+            var fontForCellBold = new Font(baseFont, 10, Font.BOLD);
+            var fontForCell = new Font(baseFont, 10);
+
+            table.AddCell(new PdfPCell(new Phrase("Самая популярная машина", fontForCellBold))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            table.AddCell(new PdfPCell(new Phrase("Средний чек", fontForCellBold))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            table.AddCell(new PdfPCell(new Phrase($"{model.MostPopularCar.Item1} ( {model.MostPopularCar.Item2} штук)", fontForCell))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            table.AddCell(new PdfPCell(new Phrase(model.AverageCheck.ToString(CultureInfo.InvariantCulture), fontForCell))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            document.Add(table);
+
+            PrintHeader("Статистика клиента", document);
+
+            table = new PdfPTable(3);
+            cell = new PdfPCell
+            {
+                Colspan = 3,
+                HorizontalAlignment = Element.ALIGN_CENTER
+            };
+            table.AddCell(cell);
+            table.SetTotalWidth(new float[] { 160, 160, 140 });
+
+            table.AddCell(new PdfPCell(new Phrase("Всего машин куплено", fontForCellBold))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            table.AddCell(new PdfPCell(new Phrase("Любимая машина", fontForCellBold))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            table.AddCell(new PdfPCell(new Phrase("Средний чек клиента", fontForCellBold))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            table.AddCell(new PdfPCell(new Phrase(model.CountCarsClient.ToString(), fontForCell))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            table.AddCell(new PdfPCell(new Phrase($"{model.MostPopularCarClient.Item1} ( {model.MostPopularCarClient.Item2} штук)", fontForCell))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            table.AddCell(new PdfPCell(new Phrase(model.AverageCheckClient.ToString(CultureInfo.InvariantCulture), fontForCell))
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER
+            });
+
+            document.Add(table);
+
+            var diagram = Image.GetInstance("D:\\reports\\diagram.png");
+            diagram.Alignment = Element.ALIGN_CENTER;
+            document.Add(diagram);
+
+            document.Close();
+            fs.Close();
         }
     }
 }

@@ -19,5 +19,7 @@ namespace KorytoServiceDAL.Interfaces
         void SaveClientReserveWord(OrderViewModel model, string fileName);
 
         void SaveClientReserveExcel(OrderViewModel model, string fileName);
+
+        void PrintStatistic(int clientId, string fileName);
     }
 }

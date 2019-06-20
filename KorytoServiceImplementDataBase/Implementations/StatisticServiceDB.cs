@@ -1,5 +1,8 @@
-﻿using KorytoServiceDAL.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using KorytoServiceDAL.Interfaces;
 using System.Linq;
+using KorytoServiceDAL.ViewModel;
 
 namespace KorytoServiceImplementDataBase.Implementations
 {
@@ -88,6 +91,27 @@ namespace KorytoServiceImplementDataBase.Implementations
         public decimal GetAverageCheck()
         { 
             return context.Orders.Average(order => order.TotalSum);
+        }
+
+        public List<CarCountViewModel> GetCarStatistic()
+        {
+            var data = new List<CarCountViewModel>();
+
+            var cars = context.OrderCars
+                .GroupBy(rec => context.Cars.FirstOrDefault(r => r.Id == rec.CarId).CarName)
+                .Select(rec => new {Name = rec.Key, Total = rec.Sum(x => x.Amount)})
+                .OrderByDescending(rec => rec.Total);
+
+            foreach (var car in cars)
+            {
+                data.Add(new CarCountViewModel
+                {
+                    CarName = car.Name,
+                    CarCount = car.Total
+                });
+            }
+
+            return data;
         }
     }
 }
