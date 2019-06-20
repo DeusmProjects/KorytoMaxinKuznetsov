@@ -2,6 +2,7 @@
 using KorytoServiceDAL.Interfaces;
 using KorytoServiceImplementDataBase.Implementations;
 using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 
 namespace KorytoWeb.Controllers
@@ -39,7 +40,7 @@ namespace KorytoWeb.Controllers
         [HttpPost]
         public ActionResult SaveClientOrders()
         {
-            var fileName = "D:\\client_orders.pdf";
+            var fileName = "D:\\reports\\orders.pdf";
 
             reportService.SaveClientOrders(new ReportBindingModel
             {
@@ -49,7 +50,7 @@ namespace KorytoWeb.Controllers
             }, 
                 Globals.AuthClient.Id);
 
-            MailService.SendEmail(Globals.AuthClient.Mail, "Отчет по заказам за период", null, fileName);
+            MailService.SendEmail(Globals.AuthClient.Mail, "Отчет по заказам за период", null, new List<string> { fileName });
 
             return RedirectToAction("Index");
         }

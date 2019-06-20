@@ -14,6 +14,7 @@ using Microsoft.Office.Interop.Word;
 using Document = iTextSharp.text.Document;
 using Font = iTextSharp.text.Font;
 using Paragraph = iTextSharp.text.Paragraph;
+using Microsoft.Office.Interop.Excel;
 
 namespace KorytoServiceImplementDataBase.Implementations
 {
@@ -35,7 +36,7 @@ namespace KorytoServiceImplementDataBase.Implementations
                 File.Delete(fileName);
             }
 
-            var winword = new Application();
+            var winword = new Microsoft.Office.Interop.Word.Application();
 
             try
             {
@@ -105,7 +106,14 @@ namespace KorytoServiceImplementDataBase.Implementations
                 paragraphTable = document.Paragraphs.Add(Type.Missing);
                 rangeTable = paragraphTable.Range;
 
-                table = document.Tables.Add(rangeTable, 20, 4, ref
+                int countRows = model.OrderCars.Count();
+
+                foreach (var car in model.OrderCars)
+                {
+                    countRows += context.CarDetails.Where(rec => rec.CarId == car.CarId).Count();
+                }
+
+                table = document.Tables.Add(rangeTable, countRows, 4, ref
                     missing, ref missing);
                 font = table.Range.Font;
                 font.Size = 14;
@@ -180,9 +188,6 @@ namespace KorytoServiceImplementDataBase.Implementations
 
                 var client = context.Clients.FirstOrDefault(rec => rec.Id == model.ClientId);
 
-                MailService.SendEmail(client?.Mail, "Оповещение по заказам",
-                    $"Заказ №{model.Id} от {model.DateCreate} зарезервирован успешно", fileName);
-
             }
             catch (Exception)
             {
@@ -194,9 +199,132 @@ namespace KorytoServiceImplementDataBase.Implementations
             }
         }
 
-        public void SaveClientReserveExel(OrderViewModel model, string fileName)
+        public void SaveClientReserveExcel(OrderViewModel model, string fileName)
         {
+            var excel = new Microsoft.Office.Interop.Excel.Application();
 
+            try
+            {
+                if (File.Exists(fileName))
+                {
+                    excel.Workbooks.Open(fileName, Type.Missing, Type.Missing,
+                   Type.Missing,
+                    Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                   Type.Missing,
+                    Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                   Type.Missing,
+                    Type.Missing);
+                }
+                else
+                {
+                    excel.SheetsInNewWorkbook = 1;
+                    excel.Workbooks.Add(Type.Missing);
+                    excel.Workbooks[1].SaveAs(fileName, XlFileFormat.xlExcel8,
+                    Type.Missing,
+                     Type.Missing, false, false, XlSaveAsAccessMode.xlNoChange,
+                    Type.Missing,
+                     Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+                }
+                Sheets excelsheets = excel.Workbooks[1].Worksheets;
+                //Получаем ссылку на лист
+                var excelworksheet = (Worksheet)excelsheets.get_Item(1);
+                //очищаем ячейки
+                excelworksheet.Cells.Clear();
+                //настройки страницы
+                excelworksheet.PageSetup.Orientation = XlPageOrientation.xlLandscape;
+                excelworksheet.PageSetup.CenterHorizontally = true;
+                excelworksheet.PageSetup.CenterVertically = true;
+                //получаем ссылку на первые 3 ячейки
+                Microsoft.Office.Interop.Excel.Range excelcells =
+               excelworksheet.get_Range("A1", "C1");
+                //объединяем их
+                excelcells.Merge(Type.Missing);
+                //задаем текст, настройки шрифта и ячейки
+                excelcells.Font.Bold = true;
+                excelcells.Value2 = "Зарезервированный заказ";
+                excelcells.RowHeight = 25;
+                excelcells.HorizontalAlignment =
+               Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                excelcells.VerticalAlignment =
+           Microsoft.Office.Interop.Excel.XlVAlign.xlVAlignCenter;
+                excelcells.Font.Name = "Times New Roman";
+                excelcells.Font.Size = 14;
+                excelcells = excelworksheet.get_Range("A2", "C2");
+                excelcells.Merge(Type.Missing);
+                excelcells.Value2 = "от " + model.DateCreate;
+                excelcells.RowHeight = 20;
+                excelcells.HorizontalAlignment =
+               Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                excelcells.VerticalAlignment =
+               Microsoft.Office.Interop.Excel.XlVAlign.xlVAlignCenter;
+                excelcells.Font.Name = "Times New Roman";
+                excelcells.Font.Size = 12;
+
+                if (model != null)
+                {
+                    excelcells = excelworksheet.get_Range("C1", "C1");
+                    foreach (var elem in model.OrderCars)
+                    {
+                        //спускаемся на 2 ячейку вниз и 2 ячейкт влево
+                        excelcells = excelcells.get_Offset(2, -2);
+                        excelcells.ColumnWidth = 15;
+                        excelcells.Value2 = elem.CarName;
+                        excelcells = excelcells.get_Offset(1, 1);
+
+                        var carDetails = context.CarDetails
+                            .Where(rec => rec.CarId == elem.CarId);
+
+                        //обводим границы
+                        if (carDetails.Count() > 0)
+                        {
+                            //получаем ячейкт для выбеления рамки под таблицу
+                            var excelBorder =
+                             excelworksheet.get_Range(excelcells,
+                             excelcells.get_Offset(carDetails.Count() - 1, 1));
+                            excelBorder.Borders.LineStyle =
+                           Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                            excelBorder.Borders.Weight =
+                           Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
+                            excelBorder.HorizontalAlignment = Constants.xlCenter;
+                            excelBorder.VerticalAlignment = Constants.xlCenter;
+                            excelBorder.BorderAround(Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous,
+
+                            Microsoft.Office.Interop.Excel.XlBorderWeight.xlMedium,
+
+                            Microsoft.Office.Interop.Excel.XlColorIndex.xlColorIndexAutomatic,
+                             1);
+                            foreach (var carDetail in carDetails)
+                            {
+                                excelcells.Value2 = context.Details.FirstOrDefault(detail => detail.Id == carDetail.DetailId).DetailName;
+                                excelcells.ColumnWidth = 10;
+                                excelcells.get_Offset(0, 1).Value2 = carDetail.Amount;
+                                excelcells = excelcells.get_Offset(1, 0);
+                            }
+                        }
+
+                        excelcells = excelcells.get_Offset(0, -1);
+                        excelcells.Value2 = "Итого машин";
+                        excelcells.Font.Bold = true;
+                        excelcells = excelcells.get_Offset(0, 2);
+                        excelcells.Value2 = elem.Amount;
+                        excelcells.Font.Bold = true;
+
+                    }
+                }
+                //сохраняем
+                excel.Workbooks[1].Save();
+                excel.Workbooks[1].Close();
+                excel.Quit();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                //закрываем
+                excel.Quit();
+            }
         }
 
         public List<ClientOrdersViewModel> GetClientOrders(ReportBindingModel model, int clientId)

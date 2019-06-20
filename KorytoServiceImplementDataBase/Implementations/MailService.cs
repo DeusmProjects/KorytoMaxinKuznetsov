@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Net;
 using System.Net.Mail;
@@ -8,7 +9,7 @@ namespace KorytoServiceImplementDataBase.Implementations
 {
     public static class MailService
     {
-        public static void SendEmail(string mailAddress, string subject, string text, string fileName)
+        public static void SendEmail(string mailAddress, string subject, string text, List<string> files)
         {
             MailMessage objMailMessage = new MailMessage();
             SmtpClient objSmtpClient = null;
@@ -18,7 +19,12 @@ namespace KorytoServiceImplementDataBase.Implementations
                 objMailMessage.To.Add(new MailAddress(mailAddress));
                 objMailMessage.Subject = subject;
                 objMailMessage.Body = text;
-                objMailMessage.Attachments.Add(new Attachment(fileName));
+
+                foreach (var file in files)
+                {
+                    objMailMessage.Attachments.Add(new Attachment(file));
+                }
+
                 objMailMessage.SubjectEncoding = Encoding.UTF8;
                 objMailMessage.BodyEncoding = Encoding.UTF8;
                 objSmtpClient = new SmtpClient("smtp.gmail.com", 587);

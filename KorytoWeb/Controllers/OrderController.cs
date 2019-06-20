@@ -5,6 +5,7 @@ using KorytoServiceDAL.ViewModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using KorytoServiceImplementDataBase.Implementations;
 
 namespace KorytoWeb.Controllers
 {
@@ -109,7 +110,22 @@ namespace KorytoWeb.Controllers
 
             order.TotalSum = orderCars.Sum(rec => rec.Amount * carService.GetElement(rec.CarId).Price);
 
-            Globals.ReportService.SaveClientReserveWord(order, "D:\\reserve.doc");
+            string basePathReports = "D:\\reports\\";
+
+            string wordFile = basePathReports + "reserve.doc";
+            string excelFile = basePathReports + "reserve.xls";
+
+            Globals.ReportService.SaveClientReserveExcel(order, excelFile);
+            Globals.ReportService.SaveClientReserveWord(order, wordFile);
+
+            var files = new List<string>
+            {
+                wordFile,
+                excelFile
+            };
+
+            MailService.SendEmail(Globals.AuthClient.Mail, "Оповещение по заказам",
+                $"Заказ №{order.Id} от {order.DateCreate} зарезервирован успешно", files);
 
             Session.Remove("Order");
             return RedirectToAction("Index", "Orders");
