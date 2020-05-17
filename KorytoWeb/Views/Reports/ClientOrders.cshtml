@@ -1,0 +1,111 @@
+﻿@model ClientOrders
+
+@{
+    ViewBag.Title = "Отчет";
+}
+
+<h2>Отчет клиента за период с @string.Format("{0:dd.MM.yyyy}", Model.DateFrom) по @string.Format("{0:dd.MM.yyyy}", Model.DateTo)</h2>
+
+@using (Html.BeginForm("SaveClientOrders", "Reports", FormMethod.Post))
+{
+    <div class="form-group">
+
+        @foreach (var item in Model.Orders
+            .Where(rec => Convert.ToDateTime(rec.DateCreate) >= Model.DateFrom && Convert.ToDateTime(rec.DateCreate) <= Model.DateTo))
+        {
+            <hr />
+            <h3>Информация по заказу</h3>
+            <table class="table table-bordered">
+                <tr>
+                    <th>
+                        <label>ФИО клиента</label>
+                    </th>
+                    <th>
+                        <label>Сумма заказа</label>
+                    </th>
+                    <th>
+                        <label>Дата заказа</label>
+                    </th>
+                    <th>
+                        <label>Статус заказа</label>
+                    </th>
+                </tr>
+
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ClientFIO)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TotalSum)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateCreate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StatusOrder)
+                    </td>
+                </tr>
+            </table>
+
+            <h4>Машины в заказе</h4>
+
+            <table class="table table-bordered">
+                <tr class="table">
+                    <th>
+                        <label>Название</label>
+                    </th>
+                    <th>
+                        <label>Количество</label>
+                    </th>
+                    <th>
+                        <label>Комплектации</label>
+                    </th>
+                </tr>
+
+                @foreach (var car in item.OrderCars.Where(rec => rec.OrderId == item.Id))
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => car.CarName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => car.Amount)
+                        </td>
+                        <td>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>
+                                        <label>Название</label>
+                                    </th>
+                                    <th>
+                                        <label>Количество</label>
+                                    </th>
+                                </tr>
+
+                                @foreach (var detail in Globals.DbContext.CarDetails.Where(rec => rec.CarId == car.CarId))
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => Globals.DetailService.GetList()
+                                                .FirstOrDefault(rec => rec.Id == detail.DetailId).DetailName)
+                                        </td>
+
+                                        <td>
+                                            @Html.DisplayFor(modelItem => detail.Amount)
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                        </td>
+                    </tr>
+                }
+            </table>
+            <hr />
+        }
+
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Отправить на почту" class="btn btn-primary" />
+        </div>
+    </div>
+}
+

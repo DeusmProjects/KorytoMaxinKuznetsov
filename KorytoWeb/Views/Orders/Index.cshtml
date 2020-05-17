@@ -1,0 +1,53 @@
+﻿@model IEnumerable<KorytoServiceDAL.ViewModel.OrderViewModel>
+
+@{
+    ViewBag.Title = "Заказы";
+}
+
+<h2>Список заказов</h2>
+
+<p>
+    @Html.ActionLink("Создать заказ", "Index", "Order")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            <label>Сумма заказа</label>
+        </th>
+        <th>
+            <label>Статус заказа</label>
+        </th>
+        <th>
+            <label>Дата создания заказа</label>
+        </th>
+        <th>
+            <label>Дата выполнения заказа</label>
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalSum)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StatusOrder)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateCreate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateImplement)
+            </td>
+            <td>
+                @Html.ActionLink("Подробнее", "Details", new { id = item.Id }) |
+                @if(item.StatusOrder == "Готов")
+                {
+                    @Html.ActionLink("Оплатить", "Pay", new { id = item.Id })
+                }
+            </td>
+        </tr>
+    }
+
+</table>

@@ -1,0 +1,62 @@
+﻿
+@{
+    ViewBag.Title = "Личный кабинет";
+}
+
+<h2>Личный кабинет</h2>
+
+<div>
+    <div class="form-group">
+        <label>Имя: </label>
+        <span>@ViewBag.User.ClientFIO</span>
+    </div>
+
+    <div class="form-group">
+        <label>Логин: </label>
+        <span>@ViewBag.User.Login</span>
+    </div>
+
+    <div class="form-group">
+        <label>Почта: </label>
+        <span>@ViewBag.User.Mail</span>
+    </div>
+
+    <div class="form-group">
+        <label>Пароль: </label>
+        <span>@ViewBag.User.Password</span>
+    </div>
+
+    <label>Статистика пользователя</label>
+
+    <table class="table">
+        <tr>
+            <th>
+                Всего машин заказано
+            </th>
+            <th>
+                "Любимая" машина
+            </th>
+            <th>
+                Средний чек
+            </th>
+            <th></th>
+        </tr>
+
+        <tr>
+            <td>
+                @ViewBag.Service.GetClientCarsCount(ViewBag.User.Id)
+            </td>
+            <td>
+                @ViewBag.Service.GetPopularCarClient(ViewBag.User.Id).Item1 
+                ( @ViewBag.Service.GetPopularCarClient(ViewBag.User.Id).Item2 )
+            </td>
+            <td>
+                @ViewBag.Service.GetAverageCustomerCheck(ViewBag.User.Id)
+            </td>
+        </tr>
+
+    </table>
+    
+    @Html.ActionLink("Сохранить БД", "SaveDataBaseClient")
+</div>
+

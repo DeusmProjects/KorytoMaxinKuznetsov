@@ -1,0 +1,38 @@
+﻿@model KorytoServiceDAL.BindingModel.ReportBindingModel
+
+@{
+    ViewBag.Title = "Отчет";
+}
+
+<h2>Отчет клиента за период</h2>
+
+@using (Html.BeginForm("CreateReport", "Reports", FormMethod.Post))
+{
+    <div class="form-group">
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Дата начала</label>
+            <div class="input-group">
+                <input type="date" class="form-control" name="dateFrom" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Дата конца</label>
+            <div class="input-group">
+                <input class="form-control" type="date" name="dateTo" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Сформировать" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+

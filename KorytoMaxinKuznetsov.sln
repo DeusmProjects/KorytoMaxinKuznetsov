@@ -3,7 +3,43 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KorytoModel", "KorytoModel\KorytoModel.csproj", "{B97AF00E-D872-4D1D-B1AA-3CC6CBBDE393}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KorytoServiceDAL", "KorytoServiceDAL\KorytoServiceDAL.csproj", "{DDD0D281-A578-470E-B249-F5B699A60481}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KorytoServiceImplementDataBase", "KorytoServiceImplementDataBase\KorytoServiceImplementDataBase.csproj", "{57FD1F5C-4EF4-43AF-A5D7-1AF24431D52E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KorytoWeb", "KorytoWeb\KorytoWeb.csproj", "{0F5A4CE4-CED8-4D25-A9C4-76F45E67AD24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KorytoView", "KorytoView\KorytoView.csproj", "{87039261-4D88-49E8-82DC-D530EC777664}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B97AF00E-D872-4D1D-B1AA-3CC6CBBDE393}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B97AF00E-D872-4D1D-B1AA-3CC6CBBDE393}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B97AF00E-D872-4D1D-B1AA-3CC6CBBDE393}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B97AF00E-D872-4D1D-B1AA-3CC6CBBDE393}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDD0D281-A578-470E-B249-F5B699A60481}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDD0D281-A578-470E-B249-F5B699A60481}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDD0D281-A578-470E-B249-F5B699A60481}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDD0D281-A578-470E-B249-F5B699A60481}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57FD1F5C-4EF4-43AF-A5D7-1AF24431D52E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57FD1F5C-4EF4-43AF-A5D7-1AF24431D52E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57FD1F5C-4EF4-43AF-A5D7-1AF24431D52E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57FD1F5C-4EF4-43AF-A5D7-1AF24431D52E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F5A4CE4-CED8-4D25-A9C4-76F45E67AD24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F5A4CE4-CED8-4D25-A9C4-76F45E67AD24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F5A4CE4-CED8-4D25-A9C4-76F45E67AD24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F5A4CE4-CED8-4D25-A9C4-76F45E67AD24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87039261-4D88-49E8-82DC-D530EC777664}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87039261-4D88-49E8-82DC-D530EC777664}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87039261-4D88-49E8-82DC-D530EC777664}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87039261-4D88-49E8-82DC-D530EC777664}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
